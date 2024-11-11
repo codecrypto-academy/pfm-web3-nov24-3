@@ -48,7 +48,7 @@ contract UserJewelChain is Ownable {
 
     User memory _user = User({user: _userAddress, role: _role, isActive: true});
 
-    _usersMapping[_userAddress] += 1;
+    _usersMapping[_userAddress] = _usersArray.length + 1;
     _usersArray.push(_user);
 
     emit UsersJewelsChain__UserCreated(_userAddress, _role, true);

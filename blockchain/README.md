@@ -18,8 +18,8 @@ El comando que se ha utilizado para desplegar el contrato:
 ```bash
 forge script script/UserJewelChain__Deploy.s.sol:DeployUsersJewelsChain --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
 ```
-El address del contrato es el siguiente: 0x7258B5E155DadDBAeDD6F12Bb15d01b4BB3aB03A
-El tx del despliegue es el siguiete: https://cardona-zkevm.polygonscan.com/tx/0x4cf9fdc460af7838cae8be32579710e2f15e2739f381a769addce8d8fbef683d
+El address del contrato es el siguiente: 0x4d7EF6640BBf1D3b1DB4eCF6373A601154A449c8
+El tx del despliegue es el siguiete: https://cardona-zkevm.polygonscan.com/tx/0x228869894c8e9b4f006cd7238bb1215a03fdc6173aa0aabe289612d0606b1984
 
 ## Libreria común
 Instalación de openzeppelin para simplificar el desarrollo de contratos.
