@@ -1,4 +1,35 @@
-## Foundry
+# JewelChain Smart Contract
+
+## Instalación
+1. Instalar dependencias.
+```bash
+npm install
+```
+2. Compilar contrato
+```bash
+forge build
+```
+
+## Polygon
+Los contratos se despliegan en la siguiente red de testnet de Polygon
+https://chainid.network/chain/2442/
+
+El comando que se ha utilizado para desplegar el contrato:
+```bash
+forge script script/UserJewelChain__Deploy.s.sol:DeployUsersJewelsChain --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
+```
+El address del contrato es el siguiente: 0x7258B5E155DadDBAeDD6F12Bb15d01b4BB3aB03A
+El tx del despliegue es el siguiete: https://cardona-zkevm.polygonscan.com/tx/0x4cf9fdc460af7838cae8be32579710e2f15e2739f381a769addce8d8fbef683d
+
+## Libreria común
+Instalación de openzeppelin para simplificar el desarrollo de contratos.
+
+```bash
+forge install OpenZeppelin/openzeppelin-contracts
+```
+
+## UserJewelChain
+
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
