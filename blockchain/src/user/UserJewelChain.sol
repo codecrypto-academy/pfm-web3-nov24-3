@@ -92,6 +92,9 @@ contract UserJewelChain is
   ) external override onlyOwner checkIfUserExist(_userAddress) {
     uint256 _index = _usersMapping[_userAddress];
 
+    User memory _user = _getUser(_userAddress);
+    _revokeRole(_user.role, _userAddress);
+
     // swap the last user to the deleted and remove it from array
     _usersArray[_index - 1] = _usersArray[_usersArray.length - 1];
     _usersArray.pop();

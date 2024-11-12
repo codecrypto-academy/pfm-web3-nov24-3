@@ -30,6 +30,8 @@ forge install OpenZeppelin/openzeppelin-contracts
 
 ## UserJewelChain
 
+Se crean los usuario con roles https://docs.openzeppelin.com/contracts/5.x/access-control
+
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
