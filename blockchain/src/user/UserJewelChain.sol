@@ -56,6 +56,7 @@ contract UserJewelChain is
 
     _usersArray.push(_user);
     _usersMapping[_userAddress] = _usersArray.length;
+    _grantRole(_role, _userAddress);
 
     emit UsersJewelsChain__UserCreated(_userAddress, _role, true);
   }
