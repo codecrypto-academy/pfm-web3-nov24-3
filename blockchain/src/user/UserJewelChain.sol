@@ -44,6 +44,9 @@ contract UserJewelChain is
     address _userAddress,
     bytes32 _role
   ) external override onlyOwner {
+    if (_userAddress == address(0)) {
+      revert UsersJewelsChain__UserInvalidAddress(_userAddress);
+    }
     if (_usersMapping[_userAddress] != 0) {
       revert UsersJewelsChain__UserExisted(_userAddress);
     }

@@ -28,9 +28,10 @@ interface IUserJewelChain {
   /**
    * Errors
    */
-  error UsersJewelsChain__UserExisted(address user);
-  error UsersJewelsChain__UserNotFound(address user);
-  error UsersJewelsChain__UserHasSameStatus(address user, bool isActive);
+  error UsersJewelsChain__UserInvalidAddress(address userAddress);
+  error UsersJewelsChain__UserExisted(address userAddress);
+  error UsersJewelsChain__UserNotFound(address userAddress);
+  error UsersJewelsChain__UserHasSameStatus(address userAddress, bool isActive);
   error UsersJewelsChain__UserInvalidRole(address userAddress, bytes32 role);
 
   /**
