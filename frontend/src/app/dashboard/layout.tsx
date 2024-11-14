@@ -14,7 +14,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!isConnected) {
-      router.push('/login');
+      router.push('/');
     }
   }, [isConnected, router]);
 
@@ -26,12 +26,6 @@ export default function DashboardLayout({
         <div className="p-4">
           {children}
         </div>
-        {/* Botón de logout en la parte inferior */}
-        <div className="fixed bottom-0 right-0 p-4">
-          <button onClick={disconnect} className="btn btn-error">
-            Cerrar Sesión
-          </button>
-        </div>
       </div> 
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label> 
@@ -42,6 +36,13 @@ export default function DashboardLayout({
           <li><a href="/dashboard">Dashboard</a></li>
           <li><a href="/dashboard/perfil">Perfil</a></li>
           {/* Agrega más elementos del menú según necesites */}
+          <div className="mt-auto">
+            <li>
+              <button onClick={disconnect} className="btn btn-secondary w-full">
+                Cerrar Sesión
+              </button>
+            </li>
+          </div>
         </ul>
       </div>
     </div>
