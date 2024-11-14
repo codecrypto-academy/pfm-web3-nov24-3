@@ -1,7 +1,20 @@
+'use client';
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const { connect, isConnected } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isConnected) {
+      router.push('/dashboard');
+    }
+  }, [isConnected, router]);
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -31,7 +44,9 @@ export default function Home() {
           </ul>
         </div>
         <div className="navbar-end">
-          <Link href="/registro" className="btn btn-primary">Regístrate Ahora</Link>
+          <button className="btn btn-primary" onClick={connect}>
+              Iniciar sesión
+            </button>
         </div>
       </header>
 
