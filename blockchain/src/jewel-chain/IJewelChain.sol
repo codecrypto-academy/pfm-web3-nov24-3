@@ -16,8 +16,12 @@ interface IJewelChain {
         uint256 date;
         uint256 quantity;
         RecordType recordType;
-        bytes32 data; // se utiliza este ultimo campo para que cada extension puede extender la informacion que necesite.
+        bytes data; // se utiliza este ultimo campo para que cada extension puede extender la informacion que necesite.
     }
+
+    // Errors
+    error RawMineral__UserInvalidAddress(address userAddress);
+    error RawMineral__UserNotAuthorized(address userAddress);
 
     /**
      * @dev Evento para la creación de un nuevo registro de trazabilidad.
@@ -36,27 +40,18 @@ interface IJewelChain {
         bytes32 name,
         uint256 date,
         uint256 quantity,
-        bytes32 data,
+        bytes data,
         RecordType recordType
     );
 
     /**
      * @dev Función para crear un nuevo registro de trazabilidad.
-     * @param supplier Dirección del proveedor o fabricante.
-     * @param uniqueId Identificador único del registro.
      * @param name Nombre del material o joya.
      * @param date Fecha asociada al evento (extracción o fabricación).
      * @param quantity Cantidad del material o joya.
      * @param data Datos adicionales específicos del registro.
      */
-    function createJewelRecord(
-        address supplier,
-        bytes32 uniqueId,
-        bytes32 name,
-        uint256 date,
-        uint256 quantity,
-        bytes32 data
-    ) external;
+    function createJewelRecord(bytes32 name, uint256 date, uint256 quantity, bytes calldata data) external;
 
     /**
      * @dev Función para obtener los registros de trazabilidad asociados a un proveedor.

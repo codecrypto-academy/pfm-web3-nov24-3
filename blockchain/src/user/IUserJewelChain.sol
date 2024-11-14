@@ -33,6 +33,9 @@ interface IUserJewelChain {
     function createUser(address _userAddress, bytes32 _role) external;
     function updateStatusUser(address _userAddress, bool _isActive) external;
     function deleteUser(address _userAddress) external;
+
+    function checkUserRole(address _userAddress, bytes32 _role) external view returns (bool);
+
     function getListUsers() external view returns (User[] memory);
     function getUser(address _userAddress) external view returns (User memory);
 }
