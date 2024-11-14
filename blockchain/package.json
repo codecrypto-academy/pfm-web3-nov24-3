@@ -1,26 +1,27 @@
 {
-  "name": "jewel-chain",
-  "version": "0.0.1",
-  "type": "module",
-  "description": "Project pfm-web3-nov24-3 trazabilidad",
-  "contributors": [
-    {
-      "name": "Johan Sebastian"
+    "name": "jewel-chain",
+    "version": "0.0.1",
+    "type": "module",
+    "description": "Project pfm-web3-nov24-3 trazabilidad",
+    "contributors": [
+        {
+            "name": "Johan Sebastian"
+        },
+        {
+            "name": "PauMB"
+        }
+    ],
+    "scripts": {
+        "build": "forge build",
+        "test": "forge test",
+        "lint": "forge fmt",
+        "deploy:user": "dotenv forge script script/UserJewelChain__Deploy.s.sol:DeployUsersJewelsChain --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy"
     },
-    {
-      "name": "PauMB"
+    "devDependencies": {
+        "dotenv": "^16.4.5",
+        "dotenv-cli": "^7.4.2",
+        "ethers": "^6.13.4",
+        "prettier": "^3.3.3",
+        "prettier-plugin-solidity": "^1.4.1"
     }
-  ],
-  "scripts": {
-    "build": "forge build",
-    "test": "forge test",
-    "deploy:user": "dotenv forge script script/UserJewelChain__Deploy.s.sol:DeployUsersJewelsChain --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy"
-  },
-  "devDependencies": {
-    "dotenv": "^16.4.5",
-    "dotenv-cli": "^7.4.2",
-    "ethers": "^6.13.4",
-    "prettier": "^3.3.3",
-    "prettier-plugin-solidity": "^1.4.1"
-  }
 }
