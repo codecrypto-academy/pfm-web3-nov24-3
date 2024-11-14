@@ -1,6 +1,6 @@
 {
-  "tabWidth": 4,
-  "useTabs": false,
-  "singleQuote": true,
-  "soliditySortImports": true
+    "tabWidth": 4,
+    "useTabs": false,
+    "singleQuote": false,
+    "soliditySortImports": true
 }
