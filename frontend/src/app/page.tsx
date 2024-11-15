@@ -71,9 +71,11 @@ export default function Home() {
             className="max-w-sm rounded-lg shadow-2xl"
           />
           <div>
-            <h1 className="text-5xl font-bold">Garantiza la autenticidad de tus joyas y piedras preciosas</h1>
-            <p className="py-6">Un sistema de trazabilidad transparente que defiende la integridad ética y la autenticidad en cada paso.</p>
-            <Link href="/registro" className="btn btn-primary">Empieza Ahora</Link>
+            <h1 className="text-5xl font-bold text-white">Garantiza la autenticidad de tus joyas y piedras preciosas</h1>
+            <p className="py-6 text-white">Un sistema de trazabilidad transparente que defiende la integridad ética y la autenticidad en cada paso.</p>
+            <button className="btn btn-primary" onClick={connect}>
+            Empieza Ahora
+            </button>
           </div>
         </div>
       </section>
