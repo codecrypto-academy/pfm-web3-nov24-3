@@ -112,7 +112,63 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">Para cada actor en la cadena de valor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Tarjetas de roles aquí */}
+            {[
+              {
+                title: "Minero",
+                description: "Registra y certifica el origen de las piedras preciosas y materiales, garantizando su procedencia ética.",
+                icon: "⛏️",
+                benefits: ["Certificación de origen", "Trazabilidad completa", "Valor agregado"]
+              },
+              {
+                title: "Fabricante",
+                description: "Documenta el proceso de fabricación y garantiza la calidad de los materiales utilizados.",
+                icon: "🏭",
+                benefits: ["Control de calidad", "Registro de procesos", "Certificación de autenticidad"]
+              },
+              {
+                title: "Distribuidor",
+                description: "Mantiene la cadena de custodia y verifica cada movimiento en la blockchain.",
+                icon: "🚛",
+                benefits: ["Seguimiento en tiempo real", "Verificación de autenticidad", "Gestión de inventario"]
+              },
+              {
+                title: "Tienda",
+                description: "Ofrece transparencia total y garantía de autenticidad a sus clientes.",
+                icon: "🏪",
+                benefits: ["Confianza del cliente", "Diferenciación", "Valor añadido"]
+              },
+              {
+                title: "Cliente Final",
+                description: "Accede a la historia completa de su joya y verifica su autenticidad.",
+                icon: "👤",
+                benefits: ["Garantía de autenticidad", "Historia completa", "Valor de reventa"]
+              },
+              {
+                title: "Certificador",
+                description: "Valida y certifica la calidad y autenticidad en cada etapa del proceso.",
+                icon: "✅",
+                benefits: ["Proceso automatizado", "Registros inmutables", "Certificación digital"]
+              }
+            ].map((role, index) => (
+              <div key={index} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+                <div className="card-body">
+                  <div className="text-4xl mb-4 text-center">{role.icon}</div>
+                  <h3 className="card-title justify-center mb-4">{role.title}</h3>
+                  <p className="text-center mb-4">{role.description}</p>
+                  <div className="divider">Beneficios</div>
+                  <ul className="list-none space-y-2">
+                    {role.benefits.map((benefit, benefitIndex) => (
+                      <li key={benefitIndex} className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
