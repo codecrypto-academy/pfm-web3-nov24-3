@@ -34,11 +34,12 @@ export default function DashboardLayout({
             <div className="font-bold">Wallet: {address?.slice(0, 6)}...{address?.slice(-4)}</div>
           </li>
           <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/dashboard/users">Usuarios</a></li>
           <li><a href="/dashboard/perfil">Perfil</a></li>
           {/* Agrega más elementos del menú según necesites */}
           <div className="mt-auto">
             <li>
-              <button onClick={disconnect} className="btn btn-secondary w-full">
+              <button onClick={disconnect} className="btn btn-outline w-full">
                 Cerrar Sesión
               </button>
             </li>
