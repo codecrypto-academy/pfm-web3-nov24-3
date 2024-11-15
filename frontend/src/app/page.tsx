@@ -51,8 +51,18 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="hero min-h-screen bg-base-200 pt-16">
-        <div className="hero-content flex-col lg:flex-row-reverse">
+      <section 
+        className="hero min-h-screen bg-base-200 pt-16 relative"
+        style={{
+          backgroundImage: 'url("/images/cover-section.jpeg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Overlay oscuro para mejorar la legibilidad */}
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        
+        <div className="hero-content flex-col lg:flex-row-reverse relative z-10">
           <Image
             src="/images/hero-jewelry.jpeg"
             alt="Joyas en blockchain"
