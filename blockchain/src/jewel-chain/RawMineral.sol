@@ -28,13 +28,20 @@ contract RawMineral is IJewelChain, UserConstant {
         sc_userJewelChain = UserJewelChain(_sc_userJewelChain);
     }
 
-    function createJewelRecord(bytes32 name, uint256 date, uint256 quantity, bytes calldata data)
+    function createJewelRecord(
+        bytes32 name,
+        uint256 date,
+        uint256 quantity,
+        bytes calldata data
+    )
         external
         override
         checkAddresZero
         checkRoleUser(UserConstant.RAW_MINERAL_ROLE)
     {
-        bytes32 uniqueId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
+        bytes32 uniqueId = keccak256(
+            abi.encodePacked(msg.sender, block.timestamp)
+        );
         JewelRecord memory jewelRecord = JewelRecord({
             supplier: msg.sender,
             uniqueId: uniqueId,
@@ -46,8 +53,44 @@ contract RawMineral is IJewelChain, UserConstant {
         });
 
         _raw[msg.sender].push(jewelRecord);
-        emit JewelChain__Created(msg.sender, uniqueId, name, date, quantity, data, RecordType.MATERIAL);
+        emit JewelChain__Created(
+            msg.sender,
+            uniqueId,
+            name,
+            date,
+            quantity,
+            data,
+            RecordType.MATERIAL
+        );
     }
 
-    function getJewelRecordBySupplier(address supplier) external view override returns (JewelRecord[] memory) {}
+    function getJewelRecordBySupplier(
+        address supplier
+    ) external view override returns (JewelRecord[] memory) {
+        // comprobar que solo pueden acceder roles RAW_MINERAL y JEWEL_FACTORY
+        if (
+            !sc_userJewelChain.checkUserRole(
+                msg.sender,
+                UserConstant.RAW_MINERAL_ROLE
+            ) &&
+            !sc_userJewelChain.checkUserRole(
+                msg.sender,
+                UserConstant.JEWEL_FACTORY_ROLE
+            )
+        ) {
+            revert RawMineral__UserNotAuthorized(msg.sender);
+        }
+
+        // comprobar que el proveedor es de rol RAW_MINERAL
+        if (
+            !sc_userJewelChain.checkUserRole(
+                supplier,
+                UserConstant.RAW_MINERAL_ROLE
+            )
+        ) {
+            revert RawMineral__SupplierIsNotRawMineral(supplier);
+        }
+
+        return _raw[supplier];
+    }
 }
