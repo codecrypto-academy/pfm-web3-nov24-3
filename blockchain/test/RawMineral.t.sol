@@ -54,8 +54,7 @@ contract RawMineralTest is Test, UserConstant {
         );
         rawMineral.createJewelRecord(name, date, quantity, data);
 
-        IJewelChain.JewelRecord[] memory record = rawMineral
-            .getJewelRecordBySupplier(rawMineralAddress);
+        IJewelChain.JewelRecord[] memory record = rawMineral.getJewelRecordBySupplier(rawMineralAddress);
 
         vm.stopPrank();
         assertEq(record[0].supplier, rawMineralAddress);
@@ -68,12 +67,7 @@ contract RawMineralTest is Test, UserConstant {
         vm.startPrank(jewelFactoryAddress);
         bytes32 name = keccak256("Gold");
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IJewelChain.RawMineral__UserNotAuthorized.selector,
-                jewelFactoryAddress
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IJewelChain.RawMineral__UserNotAuthorized.selector, jewelFactoryAddress));
         rawMineral.createJewelRecord(name, date, quantity, data);
         vm.stopPrank();
     }
@@ -81,12 +75,7 @@ contract RawMineralTest is Test, UserConstant {
     function test_GetRawMinenralByRoleAllowed() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IJewelChain.RawMineral__UserNotAuthorized.selector,
-                owner
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IJewelChain.RawMineral__UserNotAuthorized.selector, owner));
         rawMineral.getJewelRecordBySupplier(rawMineralAddress);
 
         vm.stopPrank();
@@ -94,12 +83,7 @@ contract RawMineralTest is Test, UserConstant {
 
     function test_GetRawMineralFromUserAllowed() public {
         vm.startPrank(rawMineralAddress);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IJewelChain.RawMineral__SupplierIsNotRawMineral.selector,
-                owner
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IJewelChain.RawMineral__SupplierIsNotRawMineral.selector, owner));
         rawMineral.getJewelRecordBySupplier(owner);
         vm.stopPrank();
     }
