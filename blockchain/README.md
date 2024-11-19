@@ -1,5 +1,11 @@
 # JewelChain Smart Contract
 
+## Smart contracts
+
+- UserJewelChain: "0x546A04AbA1E68b8D1906cC34E988fa7A30af2Efd"
+- RawMineral: "0x951dfef6CB8118Ef2801267488370bcAcd3F62FF"
+
+
 ## Instalación
 1. Instalar dependencias.
 ```bash
@@ -31,7 +37,7 @@ forge script script/UserJewelChain__Deploy.s.sol:DeployUsersJewelsChain --privat
 
 
 ## RawMineral
-Primero hay que desplegar el contrato de UserJewelChain, luego se despliega este contrato.
+Primero hay que desplegar el contrato de UserJewelChain, luego se despliega este contrato. Ya que necesita la direccion del contrato users.
 El comando que se ha utilizado para desplegar el contrato:
 ```bash
 forge script script/RawMineral__Deploy.s.sol:DeployRawMineral --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
