@@ -33,6 +33,7 @@ contract RawMineralTest is Test, UserConstant {
         // deploy users
         userJewelChain.createUser(rawMineralAddress, RAW_MINERAL_ROLE_TEST);
         userJewelChain.createUser(jewelFactoryAddress, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(owner, ADMIN_ROLE);
 
         rawMineral = new RawMineral(address(userJewelChain));
     }
@@ -61,5 +62,45 @@ contract RawMineralTest is Test, UserConstant {
         assertEq(record[0].name, name);
         assertEq(record[0].quantity, quantity);
         assertEq(record[0].date, date);
+    }
+
+    function test_CreateMineralByUserRoleNotAllowed() public {
+        vm.startPrank(jewelFactoryAddress);
+        bytes32 name = keccak256("Gold");
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IJewelChain.RawMineral__UserNotAuthorized.selector,
+                jewelFactoryAddress
+            )
+        );
+        rawMineral.createJewelRecord(name, date, quantity, data);
+        vm.stopPrank();
+    }
+
+    function test_GetRawMinenralByRoleAllowed() public {
+        vm.startPrank(owner);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IJewelChain.RawMineral__UserNotAuthorized.selector,
+                owner
+            )
+        );
+        rawMineral.getJewelRecordBySupplier(rawMineralAddress);
+
+        vm.stopPrank();
+    }
+
+    function test_GetRawMineralFromUserAllowed() public {
+        vm.startPrank(rawMineralAddress);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IJewelChain.RawMineral__SupplierIsNotRawMineral.selector,
+                owner
+            )
+        );
+        rawMineral.getJewelRecordBySupplier(owner);
+        vm.stopPrank();
     }
 }
