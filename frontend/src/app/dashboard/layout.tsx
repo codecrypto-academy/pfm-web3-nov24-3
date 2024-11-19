@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -36,6 +37,7 @@ export default function DashboardLayout({
           <li><a href="/dashboard">Dashboard</a></li>
           <li><a href="/dashboard/users">Usuarios</a></li>
           <li><a href="/dashboard/perfil">Perfil</a></li>
+          <Link href="/dashboard/raw-material" className="btn btn-ghost">JewelChain</Link>
           {/* Agrega más elementos del menú según necesites */}
           <div className="mt-auto">
             <li>
