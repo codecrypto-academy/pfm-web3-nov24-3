@@ -22,6 +22,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const accounts = await provider.send("eth_requestAccounts", []);
         setAddress(accounts[0]);
         localStorage.setItem('walletConnected', 'true');
+        
+        // Agregar listener para cambios de cuenta
+        window.ethereum.on('accountsChanged', (newAccounts: string[]) => {
+            if (newAccounts.length === 0) {
+              // Si no hay cuentas, desconectar
+              disconnect();
+            } else {
+              // Actualizar con la nueva cuenta
+              setAddress(newAccounts[0]);
+            }
+          });
       } else {
         alert('Por favor, instala MetaMask');
       }
