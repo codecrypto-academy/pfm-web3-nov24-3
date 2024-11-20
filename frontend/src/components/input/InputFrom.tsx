@@ -3,6 +3,9 @@ interface InputFormProps {
   name: string;
   placeholder: string;
   type: string;
+  required: boolean;
+  value?: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const InputForm = ({
@@ -10,6 +13,9 @@ export const InputForm = ({
   name,
   placeholder,
   type,
+  required,
+  value,
+  onChange,
 }: InputFormProps) => {
   return (
     <label className="form-control w-full max-w-xs">
@@ -20,6 +26,9 @@ export const InputForm = ({
         type={type}
         placeholder={placeholder}
         name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
         className="input input-bordered w-full max-w-xs"
       />
     </label>

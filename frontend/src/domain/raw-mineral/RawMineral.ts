@@ -6,7 +6,7 @@ export interface IJewelChainBase {
 
 export interface RawMineralForm extends IJewelChainBase {
   quality: number;
-  origin: number;
+  origin: string;
 };
 
 export interface IJewelChainRequest extends IJewelChainBase {
