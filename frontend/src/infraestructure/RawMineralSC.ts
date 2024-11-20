@@ -1,4 +1,4 @@
-import { IJewelChainRequest } from "@/domain/raw-mineral/RawMineral";
+import { IJewelChainRequest, IJewelChainResponse } from "@/domain/raw-mineral/RawMineral";
 import { IJewelChain } from "./IJewelChain";
 import { BrowserProvider, TransactionReceipt, TransactionResponse } from "ethers";
 import { Contract } from "ethers";
@@ -25,9 +25,15 @@ export class RawMineralSC implements IJewelChain {
     return rawMineralTransaction;
   }
 
+  async getJewelRecordBySupplier(providerAddress: string): Promise<IJewelChainResponse[]> {
+    const contract: Contract = await this.getContractRawMineal();
+    const rawMineral: IJewelChainResponse[] = await contract.getJewelRecordBySupplier(providerAddress);
+    return rawMineral;
+  }
+
   async getContractRawMineal(): Promise<Contract> {
     const signer = await this.provider.getSigner();
-    return new Contract("0x951dfef6CB8118Ef2801267488370bcAcd3F62FF", RAW_MINERAL_ABI, signer)
+    return new Contract("0x701861C86bb5eCE7eeA2ca23e89fAf35d6DA0260", RAW_MINERAL_ABI, signer)
   }
 
 }

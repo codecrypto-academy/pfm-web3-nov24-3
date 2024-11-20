@@ -1,7 +1,12 @@
+export enum RecordType {
+  MATERIAL,
+  JEWEL
+}
+
 export interface IJewelChainBase {
   name: string;
-  date: number;
-  quantity: number;
+  date: number | string;
+  quantity: number | string;
 }
 
 export interface RawMineralForm extends IJewelChainBase {
@@ -12,3 +17,11 @@ export interface RawMineralForm extends IJewelChainBase {
 export interface IJewelChainRequest extends IJewelChainBase {
   data: string;
 };
+
+export interface IJewelChainResponse extends IJewelChainRequest {
+  supplier: string;
+  uniqueId: string;
+  recordType: RecordType;
+}
+
+export interface RawMineralChain extends IJewelChainBase, RawMineralForm, IJewelChainResponse { }
