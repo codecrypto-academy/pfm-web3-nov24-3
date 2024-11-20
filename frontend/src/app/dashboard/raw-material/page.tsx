@@ -1,53 +1,34 @@
 "use client";
 
-import { RawMineralService } from "@/application/raw-mineral/RawMaterialService";
 import { InputForm } from "@/components/input/InputFrom";
 import { RawMineralTable } from "@/components/RawMineral/RawMineralTable";
 import { useAuth } from "@/context/AuthContext";
-import { RawMineralChain } from "@/domain/raw-mineral/RawMineral";
+import { useRawMineralService } from "@/hooks/raw-mineral/useRawMineral";
 import { Fragment, useEffect, useState } from "react";
-
-let rawMineralService: RawMineralService;
 
 export default function RawMaterial() {
   const { address, provider } = useAuth();
+
+  const { rawMineralList, isLoading, getAllRawMineral, createRawMineral } =
+    useRawMineralService(provider, address);
+
   const [name, setName] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [quantity, setQuantity] = useState<number | null>(null);
   const [quality, setQuality] = useState<number | null>(null);
   const [origin, setOrigin] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [rawMineralList, setRawMineralList] = useState<RawMineralChain[]>([]);
-
-  const getAllRawMineral = async () => {
-    try {
-      if (address) {
-        const rawMineralList = await rawMineralService.getJewelRecordBySupplier(
-          address
-        );
-
-        setRawMineralList(rawMineralList);
-      }
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
-
   useEffect(() => {
     if (provider) {
-      rawMineralService = new RawMineralService(provider);
       getAllRawMineral();
     }
-  }, [provider]);
+  }, [provider, getAllRawMineral]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
     try {
       const dat = new Date(date).getTime() / 1000;
-      const txHash = await rawMineralService.createRawMineral({
+      const txHash = await createRawMineral({
         name,
         date: dat,
         quantity: quantity || 0,
@@ -56,11 +37,14 @@ export default function RawMaterial() {
       });
 
       console.log("txHash: ", txHash);
+      setName("");
+      setDate("");
+      setQuantity(null);
+      setQuality(null);
+      setOrigin("");
       getAllRawMineral();
     } catch (error) {
       console.log("Error: ", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
