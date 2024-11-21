@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.27;
 
 interface IUserJewelChain {
@@ -34,6 +34,9 @@ interface IUserJewelChain {
     function createUser(address _userAddress, bytes32 _role, string memory _name) external;
     function updateStatusUser(address _userAddress, bool _isActive) external;
     function deleteUser(address _userAddress) external;
+
+    function checkUserRole(address _userAddress, bytes32 _role) external view returns (bool);
+
     function getListUsers() external view returns (User[] memory);
     function getUser(address _userAddress) external view returns (User memory);
 }

@@ -99,17 +99,27 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
     }
 
     /**
+     * @notice Check if an address has a specific role
+     * @param _userAddress The address to check
+     * @param _role The role to check, as a string
+     * @return bool indicating whether the address has the specified role
+     */
+    function checkUserRole(address _userAddress, bytes32 _role) external view override returns (bool) {
+        return hasRole(_role, _userAddress);
+    }
+
+    /**
      * @dev NOTE: this function is not efficient.
      * @notice get list of users
      */
-    function getListUsers() external view onlyOwner returns (User[] memory) {
+    function getListUsers() external view override onlyOwner returns (User[] memory) {
         return _usersArray;
     }
 
     /**
      * @notice get a user by address
      */
-    function getUser(address _userAddress) external view onlyOwner returns (User memory) {
+    function getUser(address _userAddress) external view override onlyOwner returns (User memory) {
         return _getUser(_userAddress);
     }
 
