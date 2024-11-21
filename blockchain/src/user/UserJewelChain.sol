@@ -28,7 +28,7 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         _allowedRoles[DISTRIBUTOR_ROLE] = true;
         _allowedRoles[STORE_ROLE] = true;
 
-         createUser(msg.sender, ADMIN_ROLE);
+        createUser(msg.sender, ADMIN_ROLE);
     }
 
     /**
