@@ -10,7 +10,8 @@ interface AuthContextType {
   disconnect: () => void;
   isConnected: boolean;
 }
-const ADDRESS = "0xA15BB66138824a1c7167f5E85b957d04Dd34E468"  //process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS;
+const ADDRESS = process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS as string;
+if (!ADDRESS) throw new Error('La dirección del userContract no está definida');
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
