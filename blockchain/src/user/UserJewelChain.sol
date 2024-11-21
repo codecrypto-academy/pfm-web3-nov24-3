@@ -28,7 +28,7 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         _allowedRoles[DISTRIBUTOR_ROLE] = true;
         _allowedRoles[STORE_ROLE] = true;
 
-        createUser(msg.sender, ADMIN_ROLE);
+        createUser(msg.sender, ADMIN_ROLE, "Admin");
     }
 
     /**
@@ -36,19 +36,27 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @param _userAddress the address of new user
      * @param _role the role of new user
      */
-    function createUser(address _userAddress, bytes32 _role) public override onlyOwner {
+    function createUser(
+        address _userAddress, 
+        bytes32 _role,
+        string memory _name
+    ) public onlyOwner {
         if (_userAddress == address(0)) {
             revert UsersJewelsChain__UserInvalidAddress(_userAddress);
         }
         if (_usersMapping[_userAddress] != 0) {
             revert UsersJewelsChain__UserExisted(_userAddress);
         }
-
         if (!_allowedRoles[_role]) {
             revert UsersJewelsChain__UserInvalidRole(_userAddress, _role);
         }
 
-        User memory _user = User({user: _userAddress, role: _role, isActive: true});
+        User memory _user = User({
+            user: _userAddress, 
+            role: _role, 
+            isActive: true,
+            name: _name
+        });
 
         _usersArray.push(_user);
         _usersMapping[_userAddress] = _usersArray.length;

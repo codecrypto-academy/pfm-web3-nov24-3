@@ -10,7 +10,7 @@ interface AuthContextType {
   disconnect: () => void;
   isConnected: boolean;
 }
-const ADDRESS = "0x700b6A60ce7EaaEA56F065753d8dcB9653dbAD35"  //process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS;
+const ADDRESS = "0xA15BB66138824a1c7167f5E85b957d04Dd34E468"  //process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS;
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -33,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             address: user[0],
             role: user[1],
             isActive: user[2],
+            name: user[3],
           };
         }).catch((error) => {
           console.error('Error al obtener el usuario:', error);
