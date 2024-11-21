@@ -27,10 +27,17 @@ contract Distributor is UserConstant {
         IJewelChain.JewelRecord[]
     );
 
-    event Distributor__NewDelivery(
+    event Distributor__Shipment(
         bytes32 indexed trackingId,
         address indexed shipper,
-        address indexed receiver
+        address indexed receiver,
+        Delivery[] delivery
+    );
+    event Distributor__Delivery(
+        bytes32 indexed trackingId,
+        address indexed shipper,
+        address indexed receiver,
+        Delivery delivery
     );
 
     modifier checkRoleUser(bytes32 _role) {
@@ -93,8 +100,12 @@ contract Distributor is UserConstant {
             });
             deliveriesPending[trackingId].push(delivery);
         }
-
-        emit Distributor__NewDelivery(trackingId, msg.sender, receiver);
+        emit Distributor__Shipment(
+            trackingId,
+            msg.sender,
+            receiver,
+            deliveriesPending[trackingId]
+        );
     }
 
     function confirmDelivery(bytes32 trackingId) public {}
