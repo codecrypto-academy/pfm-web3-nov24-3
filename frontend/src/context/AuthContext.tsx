@@ -2,13 +2,15 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ethers } from 'ethers';
-
+import { USER_ABI } from '@/lib/abi/user';
+import { User } from '@/types/user';
 interface AuthContextType {
   address: string | null;
   connect: () => Promise<void>;
   disconnect: () => void;
   isConnected: boolean;
 }
+const ADDRESS = "0x700b6A60ce7EaaEA56F065753d8dcB9653dbAD35"  //process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS;
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -20,19 +22,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (typeof window.ethereum !== 'undefined') {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
-        setAddress(accounts[0]);
-        localStorage.setItem('walletConnected', 'true');
-        
-        // Agregar listener para cambios de cuenta
-        window.ethereum.on('accountsChanged', (newAccounts: string[]) => {
-            if (newAccounts.length === 0) {
-              // Si no hay cuentas, desconectar
-              disconnect();
-            } else {
-              // Actualizar con la nueva cuenta
-              setAddress(newAccounts[0]);
-            }
-          });
+
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, USER_ABI as any, signer);
+        const user: User | null = await contract.getUser(accounts[0]).then((user) => {
+          setAddress(accounts[0]);
+          localStorage.setItem('walletConnected', 'true');
+          return {
+            address: user[0],
+            role: user[1],
+            isActive: user[2],
+          };
+        }).catch((error) => {
+          console.error('Error al obtener el usuario:', error);
+          alert('Tu cuenta no está registrada en la plataforma.');
+          return null;
+        });
       } else {
         alert('Por favor, instala MetaMask');
       }
@@ -44,6 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const disconnect = () => {
     setAddress(null);
     localStorage.removeItem('walletConnected');
+  };
+
+  const handleAccountsChanged = (newAccounts: string[]) => {
+    disconnect();
+    connect();
+
   };
 
   useEffect(() => {

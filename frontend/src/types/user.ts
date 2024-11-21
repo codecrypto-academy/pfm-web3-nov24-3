@@ -5,6 +5,7 @@ export interface User {
   role: UserRole;
   name?: string;
   companyName?: string;
+  isActive: boolean;
 }
 
 export interface LoginCredentials {
