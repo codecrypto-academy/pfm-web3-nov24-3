@@ -25,13 +25,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         window.ethereum.on('accountsChanged', handleAccountsChanged);
         const signer = await provider.getSigner();
-        const contract = new ethers.Contract(ADDRESS, USER_ABI as any, signer);
+        const contract = new ethers.Contract(ADDRESS, USER_ABI, signer);
         const user: User | null = await contract.getUser(accounts[0]).then((user) => {
+          if (!user[2]) { // Check if user is not active
+            alert('Tu cuenta está desactivada. Por favor, contacta al administrador.');
+            return null;
+          }
           setAddress(accounts[0]);
           localStorage.setItem('walletConnected', 'true');
           return {
             address: user[0],
-            role: user[1],
+            role: user[1], 
             isActive: user[2],
             name: user[3],
           };
