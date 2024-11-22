@@ -46,10 +46,7 @@ interface IJewelChain {
     );
 
     event JewelChain_Recieve(
-        address indexed supplier,
-        address indexed distributor,
-        bytes32 indexed trackingId,
-        JewelRecord[] jewelRecord
+        address indexed supplier, address indexed distributor, bytes32 indexed trackingId, JewelRecord[] jewelRecord
     );
 
     /**
@@ -59,29 +56,18 @@ interface IJewelChain {
      * @param quantity Cantidad del material o joya.
      * @param data Datos adicionales específicos del registro.
      */
-    function createJewelRecord(
-        bytes32 name,
-        uint256 date,
-        uint256 quantity,
-        bytes calldata data
-    ) external;
+    function createJewelRecord(bytes32 name, uint256 date, uint256 quantity, bytes calldata data) external;
 
     /**
      * @dev Función para obtener los registros de trazabilidad asociados a un proveedor.
      * @param supplier Dirección del proveedor del cual se desean consultar los registros.
      * @return Array de registros de trazabilidad `JewelRecord`.
      */
-    function getJewelRecordBySupplier(
-        address supplier
-    ) external view returns (JewelRecord[] memory);
+    function getJewelRecordBySupplier(address supplier) external view returns (JewelRecord[] memory);
 
     /**
      * @param jewels Array de registros de trazabilidad `JewelRecord`.
      */
-    function recieveMaterial(
-        address distributor,
-        address suplier,
-        bytes32 trackingId,
-        JewelRecord[] calldata jewels
-    ) external;
+    function recieveMaterial(address distributor, address suplier, bytes32 trackingId, JewelRecord[] calldata jewels)
+        external;
 }

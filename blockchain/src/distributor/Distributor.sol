@@ -26,11 +26,7 @@ contract Distributor is UserConstant {
     error Distributor__ReceiverNotFound(address receiver, bytes32 role);
 
     event Distributor__Shipment(
-        bytes32 indexed trackingId,
-        address indexed shipper,
-        address indexed receiver,
-        uint256 date,
-        Delivery delivery
+        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, uint256 date, Delivery delivery
     );
     event Distributor__Delivery(
         bytes32 indexed trackingId,
@@ -64,26 +60,15 @@ contract Distributor is UserConstant {
      * @param receiver address who send the jewels
      * @param jewelChain array of jewels to deliver
      */
-    function newShipment(
-        address receiver,
-        bytes calldata jewelChain
-    ) public checkAddresZero {
+    function newShipment(address receiver, bytes calldata jewelChain) public checkAddresZero {
         if (
-            !sc_userJewelChain.checkUserRole(
-                msg.sender,
-                UserConstant.RAW_MINERAL_ROLE
-            ) &&
-            !sc_userJewelChain.checkUserRole(
-                msg.sender,
-                UserConstant.JEWEL_FACTORY_ROLE
-            )
+            !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.RAW_MINERAL_ROLE)
+                && !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)
         ) {
             revert Distributor__UserNotAuthorized(msg.sender);
         }
 
-        bytes32 trackingId = keccak256(
-            abi.encodePacked(msg.sender, block.timestamp)
-        );
+        bytes32 trackingId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
 
         Delivery memory delivery = Delivery({
             shipper: msg.sender,
@@ -93,21 +78,13 @@ contract Distributor is UserConstant {
             deliveryDate: 0,
             jewelChain: jewelChain
         });
-        emit Distributor__Shipment(
-            trackingId,
-            msg.sender,
-            receiver,
-            delivery.shipperDate,
-            delivery
-        );
+        emit Distributor__Shipment(trackingId, msg.sender, receiver, delivery.shipperDate, delivery);
     }
 
     /**
      * @param trackingId bytes32 of the shipment
      */
-    function confirmDelivery(
-        bytes32 trackingId
-    ) public checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
+    function confirmDelivery(bytes32 trackingId) public checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
         if (deliveriesPending[trackingId].shipper == address(0)) {
             revert Distributor__TrackingIdNotFound(trackingId);
         }
@@ -116,37 +93,19 @@ contract Distributor is UserConstant {
         delivery.deliveryDate = block.timestamp;
 
         // decode jewelChain
-        IJewelChain.JewelRecord[] memory jewelRecord = abi.decode(
-            delivery.jewelChain,
-            (IJewelChain.JewelRecord[])
-        );
+        IJewelChain.JewelRecord[] memory jewelRecord = abi.decode(delivery.jewelChain, (IJewelChain.JewelRecord[]));
         address receiver = delivery.receiver;
 
         sendJewels(jewelRecord, receiver, trackingId);
 
         delete deliveriesPending[trackingId];
-        emit Distributor__Delivery(
-            trackingId,
-            delivery.receiver,
-            msg.sender,
-            delivery.deliveryDate,
-            delivery
-        );
+        emit Distributor__Delivery(trackingId, delivery.receiver, msg.sender, delivery.deliveryDate, delivery);
     }
 
-    function sendJewels(
-        IJewelChain.JewelRecord[] memory jewelRecord,
-        address receiver,
-        bytes32 trackingId
-    ) private {
+    function sendJewels(IJewelChain.JewelRecord[] memory jewelRecord, address receiver, bytes32 trackingId) private {
         bytes32 _roleUserDelivery = sc_userJewelChain.getRoleUser(receiver);
         if (_roleUserDelivery == UserConstant.RAW_MINERAL_ROLE) {
-            sc_rawMineral.recieveMaterial(
-                msg.sender,
-                receiver,
-                trackingId,
-                jewelRecord
-            );
+            sc_rawMineral.recieveMaterial(msg.sender, receiver, trackingId, jewelRecord);
         } else if (_roleUserDelivery == UserConstant.JEWEL_FACTORY_ROLE) {
             revert("Method not implemented");
         } else if (_roleUserDelivery == UserConstant.STORE_ROLE) {
