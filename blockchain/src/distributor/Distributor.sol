@@ -22,22 +22,13 @@ contract Distributor is UserConstant {
 
     error Distributor__UserNotAuthorized(address user);
     error Distributor__UserInvalidAddress(address user);
-    error Distributor__NothingToDelivery(
-        address user,
-        IJewelChain.JewelRecord[]
-    );
+    error Distributor__NothingToDelivery(address user, IJewelChain.JewelRecord[]);
 
     event Distributor__Shipment(
-        bytes32 indexed trackingId,
-        address indexed shipper,
-        address indexed receiver,
-        Delivery[] delivery
+        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, Delivery[] delivery
     );
     event Distributor__Delivery(
-        bytes32 indexed trackingId,
-        address indexed shipper,
-        address indexed receiver,
-        Delivery delivery
+        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, Delivery delivery
     );
 
     modifier checkRoleUser(bytes32 _role) {
@@ -64,19 +55,10 @@ contract Distributor is UserConstant {
      * @param receiver address who send the jewels
      * @param jewelRecord array of jewels to deliver
      */
-    function newShipment(
-        address receiver,
-        IJewelChain.JewelRecord[] memory jewelRecord
-    ) public checkAddresZero {
+    function newShipment(address receiver, IJewelChain.JewelRecord[] memory jewelRecord) public checkAddresZero {
         if (
-            !sc_userJewelChain.checkUserRole(
-                msg.sender,
-                UserConstant.RAW_MINERAL_ROLE
-            ) &&
-            !sc_userJewelChain.checkUserRole(
-                msg.sender,
-                UserConstant.JEWEL_FACTORY_ROLE
-            )
+            !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.RAW_MINERAL_ROLE)
+                && !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)
         ) {
             revert Distributor__UserNotAuthorized(msg.sender);
         }
@@ -85,9 +67,7 @@ contract Distributor is UserConstant {
             revert Distributor__NothingToDelivery(msg.sender, jewelRecord);
         }
 
-        bytes32 trackingId = keccak256(
-            abi.encodePacked(msg.sender, block.timestamp)
-        );
+        bytes32 trackingId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
 
         for (uint256 index = 0; index < jewelRecord.length; index++) {
             Delivery memory delivery = Delivery({
@@ -100,12 +80,7 @@ contract Distributor is UserConstant {
             });
             deliveriesPending[trackingId].push(delivery);
         }
-        emit Distributor__Shipment(
-            trackingId,
-            msg.sender,
-            receiver,
-            deliveriesPending[trackingId]
-        );
+        emit Distributor__Shipment(trackingId, msg.sender, receiver, deliveriesPending[trackingId]);
     }
 
     function confirmDelivery(bytes32 trackingId) public {}

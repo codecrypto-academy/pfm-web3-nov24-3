@@ -27,6 +27,7 @@ interface IUserJewelChain {
     error UsersJewelsChain__UserNotFound(address userAddress);
     error UsersJewelsChain__UserHasSameStatus(address userAddress, bool isActive);
     error UsersJewelsChain__UserInvalidRole(address userAddress, bytes32 role);
+    error UsersJewelsChain__UserIsNotActive(address userAddress);
 
     /**
      * Functions
@@ -39,4 +40,5 @@ interface IUserJewelChain {
 
     function getListUsers() external view returns (User[] memory);
     function getUser(address _userAddress) external view returns (User memory);
+    function loginUser() external view returns (User memory);
 }
