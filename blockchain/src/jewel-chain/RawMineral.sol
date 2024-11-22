@@ -65,4 +65,18 @@ contract RawMineral is IJewelChain, UserConstant {
 
         return _raw[supplier];
     }
+
+    function recieveMaterial(address distributor, address supplier, bytes32 trackingId, JewelRecord[] calldata jewels)
+        external
+        override
+    {
+        if (!sc_userJewelChain.checkUserRole(supplier, UserConstant.RAW_MINERAL_ROLE)) {
+            revert RawMineral__SupplierIsNotRawMineral(supplier);
+        }
+        for (uint256 i = 0; i < jewels.length; ++i) {
+            _raw[supplier].push(jewels[i]);
+        }
+
+        emit JewelChain_Recieve(supplier, distributor, trackingId, jewels);
+    }
 }

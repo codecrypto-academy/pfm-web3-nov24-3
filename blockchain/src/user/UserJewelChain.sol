@@ -131,16 +131,35 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         external
         view
         override
+        onlyOwner
         checkIfUserExist(_userAddress)
         returns (User memory)
     {
         return _getUser(_userAddress);
     }
 
+    function loginUser() external view override checkIfUserExist(msg.sender) returns (User memory) {
+        User memory user = _getUser(msg.sender);
+        if (!user.isActive) {
+            revert UsersJewelsChain__UserIsNotActive(msg.sender);
+        }
+        return _getUser(msg.sender);
+    }
+
+    function getRoleUser(address _userAddress)
+        external
+        view
+        override
+        checkIfUserExist(_userAddress)
+        returns (bytes32)
+    {
+        return _getUser(_userAddress).role;
+    }
+
     /**
      * Private functions
      */
-    function _getUser(address _userAddress) private view checkIfUserExist(_userAddress) returns (User memory) {
+    function _getUser(address _userAddress) private view returns (User memory) {
         uint256 _index = _usersMapping[_userAddress];
         return _usersArray[_index - 1];
     }
