@@ -7,10 +7,10 @@ import { useRawMineralService } from "@/hooks/raw-mineral/useRawMineral";
 import { Fragment, useEffect, useState } from "react";
 
 export default function RawMaterial() {
-  const { address, provider } = useAuth();
+  const { provider, user } = useAuth();
 
   const { rawMineralList, isLoading, getAllRawMineral, createRawMineral } =
-    useRawMineralService(provider, address);
+    useRawMineralService(provider, user?.address);
 
   const [name, setName] = useState<string>("");
   const [date, setDate] = useState<string>("");

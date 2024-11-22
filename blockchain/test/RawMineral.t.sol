@@ -31,9 +31,9 @@ contract RawMineralTest is Test, UserConstant {
         userJewelChain = new UserJewelChain();
 
         // deploy users
-        userJewelChain.createUser(rawMineralAddress, RAW_MINERAL_ROLE_TEST);
-        userJewelChain.createUser(jewelFactoryAddress, JEWEL_FACTORY_ROLE_TEST);
-        userJewelChain.createUser(owner, ADMIN_ROLE);
+        userJewelChain.createUser(rawMineralAddress, RAW_MINERAL_ROLE_TEST, "John Doe");
+        userJewelChain.createUser(jewelFactoryAddress, JEWEL_FACTORY_ROLE_TEST, "John Doe");
+        userJewelChain.createUser(owner, ADMIN_ROLE, "John Doe");
 
         rawMineral = new RawMineral(address(userJewelChain));
     }

@@ -9,6 +9,7 @@ interface IUserJewelChain {
         address user;
         bytes32 role;
         bool isActive;
+        string name;
     }
 
     /**
@@ -30,7 +31,7 @@ interface IUserJewelChain {
     /**
      * Functions
      */
-    function createUser(address _userAddress, bytes32 _role) external;
+    function createUser(address _userAddress, bytes32 _role, string memory _name) external;
     function updateStatusUser(address _userAddress, bool _isActive) external;
     function deleteUser(address _userAddress) external;
 

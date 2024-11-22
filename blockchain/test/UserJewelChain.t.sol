@@ -21,21 +21,22 @@ contract UserJewelChainTest is Test, UserConstant {
     function test_CreateUser() public {
         vm.expectEmit(true, true, false, false);
         emit IUserJewelChain.UsersJewelsChain__UserCreated(USER, JEWEL_FACTORY_ROLE_TEST, true);
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
 
         IUserJewelChain.User memory userCreated = userJewelChain.getUser(USER);
         assertEq(userCreated.user, USER);
         assertEq(userCreated.role, JEWEL_FACTORY_ROLE_TEST);
         assertEq(userCreated.isActive, true);
+        assertEq(userCreated.name, "John Doe");
     }
 
     function test_CreateUserThatExist() public {
         vm.expectEmit(true, true, false, false);
         emit IUserJewelChain.UsersJewelsChain__UserCreated(USER, JEWEL_FACTORY_ROLE_TEST, true);
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
 
         vm.expectRevert(abi.encodeWithSelector(IUserJewelChain.UsersJewelsChain__UserExisted.selector, USER));
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
     }
 
     function test_CreateUserWithNotExistRole() public {
@@ -44,11 +45,11 @@ contract UserJewelChainTest is Test, UserConstant {
                 IUserJewelChain.UsersJewelsChain__UserInvalidRole.selector, USER, keccak256("FALSE_ROLE")
             )
         );
-        userJewelChain.createUser(USER, keccak256("FALSE_ROLE"));
+        userJewelChain.createUser(USER, keccak256("FALSE_ROLE"), "John Doe");
     }
 
     function test_UpdateUser() public {
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
 
         vm.expectEmit(true, true, false, false);
         emit IUserJewelChain.UsersJewelsChain__UserUpdatedStatus(USER, false);
@@ -66,7 +67,7 @@ contract UserJewelChainTest is Test, UserConstant {
     }
 
     function test_UpdateUserSameStatus() public {
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
         vm.expectRevert(
             abi.encodeWithSelector(IUserJewelChain.UsersJewelsChain__UserHasSameStatus.selector, USER, true)
         );
@@ -74,7 +75,7 @@ contract UserJewelChainTest is Test, UserConstant {
     }
 
     function test_DeleteUser() public {
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
         vm.expectEmit(true, true, false, false);
         emit IUserJewelChain.UsersJewelsChain__UserDeleted(USER);
 
@@ -89,7 +90,7 @@ contract UserJewelChainTest is Test, UserConstant {
     function test_OnlyAdminCanCall() public {
         vm.startPrank(USER);
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, USER));
-        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST);
+        userJewelChain.createUser(USER, JEWEL_FACTORY_ROLE_TEST, "John Doe");
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, USER));
         userJewelChain.updateStatusUser(USER, false);
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, USER));

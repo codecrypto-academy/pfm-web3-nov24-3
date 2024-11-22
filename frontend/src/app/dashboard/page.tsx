@@ -3,17 +3,16 @@
 import { useAuth } from '@/context/AuthContext';
 
 export default function Dashboard() {
-  const { address } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="p-4">
       <div className="grid gap-4">
-        {/* Encabezado */}
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title text-2xl">Bienvenido a tu Dashboard</h2>
             <p className="text-sm opacity-70">
-              Wallet conectada: {address?.slice(0, 6)}...{address?.slice(-4)}
+              Wallet conectada: {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
             </p>
           </div>
         </div>

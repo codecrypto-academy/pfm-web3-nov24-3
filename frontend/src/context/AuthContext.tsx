@@ -9,19 +9,22 @@ import {
 } from "react";
 import { ethers } from "ethers";
 import { BrowserProvider } from "ethers";
-
+import { USER_ABI } from "@/lib/abi/user";
+import { User } from "@/types/user";
 interface AuthContextType {
-  address: string | null;
+  user: User | null;
   connect: () => Promise<void>;
   disconnect: () => void;
   isConnected: boolean;
   provider: BrowserProvider | null;
 }
+const ADDRESS = process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS as string;
+if (!ADDRESS) throw new Error("La dirección del userContract no está definida");
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [address, setAddress] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
 
   const connect = async () => {
@@ -30,8 +33,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const provider = new ethers.BrowserProvider(window.ethereum);
         setProvider(provider);
         const accounts = await provider.send("eth_requestAccounts", []);
-        setAddress(accounts[0]);
-        localStorage.setItem("walletConnected", "true");
+
+        window.ethereum.on("accountsChanged", handleAccountsChanged);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(ADDRESS, USER_ABI, signer);
+        await contract
+          .getUser(accounts[0])
+          .then((user) => {
+            if (!user[2]) {
+              // Check if user is not active
+              alert(
+                "Tu cuenta está desactivada. Por favor, contacta al administrador."
+              );
+              return null;
+            }
+            setUser({
+              address: user[0],
+              role: user[1],
+              isActive: user[2],
+              name: user[3],
+            });
+          })
+          .catch((error) => {
+            console.error("Error al obtener el usuario:", error);
+            alert("Tu cuenta no está registrada en la plataforma.");
+            return null;
+          });
       } else {
         alert("Por favor, instala MetaMask");
       }
@@ -41,8 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const disconnect = () => {
-    setAddress(null);
+    setUser(null);
     localStorage.removeItem("walletConnected");
+  };
+
+  const handleAccountsChanged = () => {
+    disconnect();
+    connect();
   };
 
   useEffect(() => {
@@ -56,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ address, connect, disconnect, isConnected: !!address, provider }}
+      value={{ user, connect, disconnect, isConnected: !!user, provider }}
     >
       {children}
     </AuthContext.Provider>
