@@ -13,22 +13,22 @@ contract Distributor is UserConstant {
         bytes32 trackingId;
         uint256 shipperDate;
         uint256 deliveryDate;
-        IJewelChain.JewelRecord jewelRecord;
+        bytes jewelChain;
     }
 
-    mapping(bytes32 => Delivery[]) deliveriesPending;
+    mapping(bytes32 => Delivery) deliveriesPending;
     RawMineral private sc_rawMineral;
     UserJewelChain private sc_userJewelChain;
 
     error Distributor__UserNotAuthorized(address user);
     error Distributor__UserInvalidAddress(address user);
-    error Distributor__NothingToDelivery(address user, IJewelChain.JewelRecord[]);
+    error Distributor__TrackingIdNotFound(bytes32 trackingId);
 
     event Distributor__Shipment(
-        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, Delivery[] delivery
+        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, uint256 date, Delivery delivery
     );
     event Distributor__Delivery(
-        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, Delivery delivery
+        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, uint256 date, Delivery delivery
     );
 
     modifier checkRoleUser(bytes32 _role) {
@@ -53,9 +53,9 @@ contract Distributor is UserConstant {
     /**
      * @notice
      * @param receiver address who send the jewels
-     * @param jewelRecord array of jewels to deliver
+     * @param jewelChain array of jewels to deliver
      */
-    function newShipment(address receiver, IJewelChain.JewelRecord[] memory jewelRecord) public checkAddresZero {
+    function newShipment(address receiver, bytes calldata jewelChain) public checkAddresZero {
         if (
             !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.RAW_MINERAL_ROLE)
                 && !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)
@@ -63,25 +63,30 @@ contract Distributor is UserConstant {
             revert Distributor__UserNotAuthorized(msg.sender);
         }
 
-        if (jewelRecord.length == 0) {
-            revert Distributor__NothingToDelivery(msg.sender, jewelRecord);
-        }
-
         bytes32 trackingId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
 
-        for (uint256 index = 0; index < jewelRecord.length; index++) {
-            Delivery memory delivery = Delivery({
-                shipper: msg.sender,
-                receiver: receiver,
-                trackingId: trackingId,
-                shipperDate: block.timestamp,
-                deliveryDate: 0,
-                jewelRecord: jewelRecord[index]
-            });
-            deliveriesPending[trackingId].push(delivery);
-        }
-        emit Distributor__Shipment(trackingId, msg.sender, receiver, deliveriesPending[trackingId]);
+        Delivery memory delivery = Delivery({
+            shipper: msg.sender,
+            receiver: receiver,
+            trackingId: trackingId,
+            shipperDate: block.timestamp,
+            deliveryDate: 0,
+            jewelChain: jewelChain
+        });
+        emit Distributor__Shipment(trackingId, msg.sender, receiver, delivery.shipperDate, delivery);
     }
 
-    function confirmDelivery(bytes32 trackingId) public {}
+    /**
+     * @param trackingId bytes32 of the shipment
+     */
+    function confirmDelivery(bytes32 trackingId) public checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
+        if (deliveriesPending[trackingId].shipper == address(0)) {
+            revert Distributor__TrackingIdNotFound(trackingId);
+        }
+
+        Delivery memory delivery = deliveriesPending[trackingId];
+        delivery.deliveryDate = block.timestamp;
+        delete deliveriesPending[trackingId];
+        emit Distributor__Delivery(trackingId, delivery.shipper, delivery.receiver, delivery.deliveryDate, delivery);
+    }
 }

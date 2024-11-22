@@ -149,7 +149,7 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
     /**
      * Private functions
      */
-    function _getUser(address _userAddress) private view checkIfUserExist(_userAddress) returns (User memory) {
+    function _getUser(address _userAddress) private view returns (User memory) {
         uint256 _index = _usersMapping[_userAddress];
         return _usersArray[_index - 1];
     }
