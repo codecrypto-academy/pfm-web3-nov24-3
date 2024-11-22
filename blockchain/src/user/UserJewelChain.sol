@@ -21,6 +21,13 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         _;
     }
 
+    modifier checkIfZerroAddress(address _userAddress) {
+        if (_userAddress == address(0)) {
+            revert UsersJewelsChain__UserInvalidAddress(_userAddress);
+        }
+        _;
+    }
+
     constructor() Ownable(msg.sender) {
         _allowedRoles[ADMIN_ROLE] = true;
         _allowedRoles[RAW_MINERAL_ROLE] = true;
@@ -36,10 +43,11 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @param _userAddress the address of new user
      * @param _role the role of new user
      */
-    function createUser(address _userAddress, bytes32 _role, string memory _name) public onlyOwner {
-        if (_userAddress == address(0)) {
-            revert UsersJewelsChain__UserInvalidAddress(_userAddress);
-        }
+    function createUser(address _userAddress, bytes32 _role, string memory _name)
+        public
+        onlyOwner
+        checkIfZerroAddress(_userAddress)
+    {
         if (_usersMapping[_userAddress] != 0) {
             revert UsersJewelsChain__UserExisted(_userAddress);
         }
@@ -119,7 +127,13 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
     /**
      * @notice get a user by address
      */
-    function getUser(address _userAddress) external view override onlyOwner returns (User memory) {
+    function getUser(address _userAddress)
+        external
+        view
+        override
+        checkIfUserExist(_userAddress)
+        returns (User memory)
+    {
         return _getUser(_userAddress);
     }
 
