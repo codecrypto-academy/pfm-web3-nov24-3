@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 let rawMineralService: RawMineralService;
 export const useRawMineralService = (
   provider: BrowserProvider | null,
-  address: string | null
+  address: string | undefined
 ) => {
   const [rawMineralList, setRawMineralList] = useState<RawMineralChain[]>([]);
   const [isLoading, setIsLoading] = useState(false);

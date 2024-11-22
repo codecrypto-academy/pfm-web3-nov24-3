@@ -33,7 +33,7 @@ export class RawMineralSC implements IJewelChain {
 
   async getContractRawMineal(): Promise<Contract> {
     const signer = await this.provider.getSigner();
-    return new Contract("0x701861C86bb5eCE7eeA2ca23e89fAf35d6DA0260", RAW_MINERAL_ABI, signer)
+    return new Contract("0x1Da1e5EE07AD91E402BD4Fc14773f7a4caa6b2ad", RAW_MINERAL_ABI, signer)
   }
 
 }

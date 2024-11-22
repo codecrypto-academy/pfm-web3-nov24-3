@@ -81,6 +81,7 @@ const USER_ABI = [
                 type: "bytes32",
                 internalType: "bytes32",
             },
+            { name: "_name", type: "string", internalType: "string" },
         ],
         outputs: [],
         stateMutability: "nonpayable",
@@ -122,6 +123,11 @@ const USER_ABI = [
                         name: "isActive",
                         type: "bool",
                         internalType: "bool",
+                    },
+                    {
+                        name: "name",
+                        type: "string",
+                        internalType: "string",
                     },
                 ],
             },
@@ -165,6 +171,11 @@ const USER_ABI = [
                         name: "isActive",
                         type: "bool",
                         internalType: "bool",
+                    },
+                    {
+                        name: "name",
+                        type: "string",
+                        internalType: "string",
                     },
                 ],
             },
@@ -552,7 +563,7 @@ const USER_ABI = [
 
 const PROVIDER = new ethers.JsonRpcProvider(process.env.PROVIDER);
 
-const ADDRESS_CONTRACT = "0x546A04AbA1E68b8D1906cC34E988fa7A30af2Efd";
+const ADDRESS_CONTRACT = "0x5f474bC674b6Ad4d7b6A5c6429d586D53053DA33";
 
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, PROVIDER);
 
@@ -574,11 +585,18 @@ const jewelFactoryRole = ethers.solidityPackedKeccak256(
     [JEWEL_FACTORY_ROLE],
 );
 
+const ADMIN_ROLE = "ADMIN";
+const adminRole = ethers.solidityPackedKeccak256(
+    ["string"],
+    [JEWEL_FACTORY_ROLE],
+);
+
 const interface_SC_User = new ethers.Interface(USER_ABI);
 
 const mapRole = {
     [rawMineralRole]: RAW_MINERAL_ROLE,
     [jewelFactoryRole]: JEWEL_FACTORY_ROLE,
+    [adminRole]: ADMIN_ROLE,
 };
 
 const createUser = async () => {
@@ -590,13 +608,16 @@ const createUser = async () => {
         const tx = await userJewelsContract.createUser(
             addressNewUser,
             rawMineralRole,
+            "raw_mineral",
         );
+        tx.wait();
         console.log("tx", tx);
-
         const tx2 = await userJewelsContract.createUser(
             addressNewUserRawMineral,
             jewelFactoryRole,
+            "jewel_factory",
         );
+        tx2.wait();
         console.log("tx2", tx2);
     } catch (err) {
         console.log("err", err);
