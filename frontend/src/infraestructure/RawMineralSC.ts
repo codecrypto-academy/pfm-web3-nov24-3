@@ -33,7 +33,9 @@ export class RawMineralSC implements IJewelChain {
 
   async getContractRawMineal(): Promise<Contract> {
     const signer = await this.provider.getSigner();
-    return new Contract("0x1Da1e5EE07AD91E402BD4Fc14773f7a4caa6b2ad", RAW_MINERAL_ABI, signer)
+    const ADDRESS = process.env.NEXT_PUBLIC_RAW_MINERAL_CONTRACT_ADDRESS as string;
+    if (!ADDRESS) throw new Error("La dirección del rawMineralContract no está definida");
+    return new Contract(ADDRESS, RAW_MINERAL_ABI, signer)
   }
 
 }
