@@ -5,36 +5,12 @@ import {RawMineral} from "./../jewel-chain/RawMineral.sol";
 import {IJewelChain} from "./../jewel-chain/IJewelChain.sol";
 import {UserJewelChain} from "./../user/UserJewelChain.sol";
 import {UserConstant} from "./../user/UserConstant.sol";
+import {IDistributor} from "./IDistributor.sol";
 
-contract Distributor is UserConstant {
-    struct Delivery {
-        address shipper;
-        address receiver;
-        bytes32 trackingId;
-        uint256 shipperDate;
-        uint256 deliveryDate;
-        bytes jewelChain;
-    }
-
+contract Distributor is IDistributor, UserConstant {
     mapping(bytes32 => Delivery) deliveriesPending;
     RawMineral private sc_rawMineral;
     UserJewelChain private sc_userJewelChain;
-
-    error Distributor__UserNotAuthorized(address user);
-    error Distributor__UserInvalidAddress(address user);
-    error Distributor__TrackingIdNotFound(bytes32 trackingId);
-    error Distributor__ReceiverNotFound(address receiver, bytes32 role);
-
-    event Distributor__Shipment(
-        bytes32 indexed trackingId, address indexed shipper, address indexed receiver, uint256 date, Delivery delivery
-    );
-    event Distributor__Delivery(
-        bytes32 indexed trackingId,
-        address indexed receiver,
-        address indexed distributor,
-        uint256 date,
-        Delivery delivery
-    );
 
     modifier checkRoleUser(bytes32 _role) {
         if (!sc_userJewelChain.checkUserRole(msg.sender, _role)) {
@@ -60,7 +36,7 @@ contract Distributor is UserConstant {
      * @param receiver address who send the jewels
      * @param jewelChain array of jewels to deliver
      */
-    function newShipment(address receiver, bytes calldata jewelChain) public checkAddresZero {
+    function newShipment(address receiver, bytes calldata jewelChain) external override checkAddresZero {
         if (
             !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.RAW_MINERAL_ROLE)
                 && !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)
@@ -68,13 +44,15 @@ contract Distributor is UserConstant {
             revert Distributor__UserNotAuthorized(msg.sender);
         }
 
-        bytes32 trackingId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
+        uint256 date = block.timestamp;
+
+        bytes32 trackingId = keccak256(abi.encodePacked(msg.sender, date));
 
         Delivery memory delivery = Delivery({
             shipper: msg.sender,
             receiver: receiver,
             trackingId: trackingId,
-            shipperDate: block.timestamp,
+            shipperDate: date,
             deliveryDate: 0,
             jewelChain: jewelChain
         });
@@ -84,7 +62,7 @@ contract Distributor is UserConstant {
     /**
      * @param trackingId bytes32 of the shipment
      */
-    function confirmDelivery(bytes32 trackingId) public checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
+    function confirmDelivery(bytes32 trackingId) external override checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
         if (deliveriesPending[trackingId].shipper == address(0)) {
             revert Distributor__TrackingIdNotFound(trackingId);
         }
