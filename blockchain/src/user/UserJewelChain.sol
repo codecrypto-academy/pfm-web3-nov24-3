@@ -6,7 +6,12 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {UserConstant} from "./UserConstant.sol";
 import {IUserJewelChain} from "./IUserJewelChain.sol";
 
-contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant {
+contract UserJewelChain is
+    IUserJewelChain,
+    Ownable,
+    AccessControl,
+    UserConstant
+{
     mapping(address => uint256) private _usersMapping;
     User[] private _usersArray;
     mapping(bytes32 => bool) private _allowedRoles;
@@ -43,11 +48,11 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @param _userAddress the address of new user
      * @param _role the role of new user
      */
-    function createUser(address _userAddress, bytes32 _role, string memory _name)
-        public
-        onlyOwner
-        checkIfZerroAddress(_userAddress)
-    {
+    function createUser(
+        address _userAddress,
+        bytes32 _role,
+        string memory _name
+    ) public onlyOwner checkIfZerroAddress(_userAddress) {
         if (_usersMapping[_userAddress] != 0) {
             revert UsersJewelsChain__UserExisted(_userAddress);
         }
@@ -55,7 +60,12 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
             revert UsersJewelsChain__UserInvalidRole(_userAddress, _role);
         }
 
-        User memory _user = User({user: _userAddress, role: _role, isActive: true, name: _name});
+        User memory _user = User({
+            user: _userAddress,
+            role: _role,
+            isActive: true,
+            name: _name
+        });
 
         _usersArray.push(_user);
         _usersMapping[_userAddress] = _usersArray.length;
@@ -69,12 +79,10 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @param _userAddress the address of user
      * @param _isActive the new status of the user
      */
-    function updateStatusUser(address _userAddress, bool _isActive)
-        external
-        override
-        onlyOwner
-        checkIfUserExist(_userAddress)
-    {
+    function updateStatusUser(
+        address _userAddress,
+        bool _isActive
+    ) external override onlyOwner checkIfUserExist(_userAddress) {
         uint256 _index = _usersMapping[_userAddress];
         User memory _user = _usersArray[_index - 1];
 
@@ -92,7 +100,9 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @notice delete a user by Owner
      * @param _userAddress the address of user
      */
-    function deleteUser(address _userAddress) external override onlyOwner checkIfUserExist(_userAddress) {
+    function deleteUser(
+        address _userAddress
+    ) external override onlyOwner checkIfUserExist(_userAddress) {
         uint256 _index = _usersMapping[_userAddress];
 
         User memory _user = _getUser(_userAddress);
@@ -112,7 +122,10 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @param _role The role to check, as a string
      * @return bool indicating whether the address has the specified role
      */
-    function checkUserRole(address _userAddress, bytes32 _role) external view override returns (bool) {
+    function checkUserRole(
+        address _userAddress,
+        bytes32 _role
+    ) external view override returns (bool) {
         return hasRole(_role, _userAddress);
     }
 
@@ -120,14 +133,22 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
      * @dev NOTE: this function is not efficient.
      * @notice get list of users
      */
-    function getListUsers() external view override onlyOwner returns (User[] memory) {
+    function getListUsers()
+        external
+        view
+        override
+        onlyOwner
+        returns (User[] memory)
+    {
         return _usersArray;
     }
 
     /**
      * @notice get a user by address
      */
-    function getUser(address _userAddress)
+    function getUser(
+        address _userAddress
+    )
         external
         view
         override
@@ -138,12 +159,24 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         return _getUser(_userAddress);
     }
 
-    function loginUser() external view override checkIfUserExist(msg.sender) returns (User memory) {
+    function loginUser()
+        external
+        view
+        override
+        checkIfUserExist(msg.sender)
+        returns (User memory)
+    {
         User memory user = _getUser(msg.sender);
         if (!user.isActive) {
             revert UsersJewelsChain__UserIsNotActive(msg.sender);
         }
         return _getUser(msg.sender);
+    }
+
+    function getRoleUser(
+        address _userAddress
+    ) external view override checkIfUserExist(_userAddress) returns (bytes32) {
+        return _getUser(_userAddress).role;
     }
 
     /**
