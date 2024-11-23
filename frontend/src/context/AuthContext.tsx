@@ -10,7 +10,21 @@ import {
 import { ethers } from "ethers";
 import { BrowserProvider } from "ethers";
 import { USER_ABI } from "@/lib/abi/user";
-import { User } from "@/types/user";
+import { User, UserRole } from "@/types/user";
+
+
+interface Roles {
+  [key: string]: string;
+}
+
+const roles: Roles = {
+  ADMIN_ROLE: ethers.keccak256(ethers.toUtf8Bytes("ADMIN_ROLE")),
+  RAW_MINERAL_ROLE: ethers.keccak256(ethers.toUtf8Bytes("RAW_MINERAL")),
+  JEWEL_FACTORY_ROLE: ethers.keccak256(ethers.toUtf8Bytes("JEWEL_FACTORY")),
+  DISTRIBUTOR_ROLE: ethers.keccak256(ethers.toUtf8Bytes("DISTRIBUTOR")),
+  STORE_ROLE: ethers.keccak256(ethers.toUtf8Bytes("STORE")),
+};
+
 interface AuthContextType {
   user: User | null;
   connect: () => Promise<void>;
@@ -49,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
             setUser({
               address: user[0],
-              role: user[1],
+              role: getRoleName(user[1]),
               isActive: user[2],
               name: user[3],
             });
@@ -96,3 +110,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+
+function getRoleName(roleHash: string): UserRole {
+  for (const [roleName, hash] of Object.entries(roles)) {
+      if (hash === roleHash) {
+          return roleName as UserRole;
+      }
+  }
+  return "UNKNOWN_ROLE"; // Devuelve un valor por defecto si no coincide ningún rol
+}
+

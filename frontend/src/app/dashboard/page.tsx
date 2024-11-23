@@ -10,9 +10,12 @@ export default function Dashboard() {
       <div className="grid gap-4">
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
-            <h2 className="card-title text-2xl">Bienvenido a tu Dashboard</h2>
+            <h2 className="card-title text-2xl">Bienvenido a tu Dashboard, {user?.name}</h2>
             <p className="text-sm opacity-70">
               Wallet conectada: {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
+            </p>
+            <p className="text-sm opacity-70">
+              Tipo de cuenta: {user?.role}
             </p>
           </div>
         </div>
