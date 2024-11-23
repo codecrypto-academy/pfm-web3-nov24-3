@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FaHome, FaShoppingCart, FaStore, FaExchangeAlt, FaBoxes, FaWarehouse, FaUsers, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaShoppingCart, FaStore, FaExchangeAlt, FaBoxes, FaWarehouse, FaUsers, FaUserCircle, FaSignOutAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 export default function DashboardLayout({
   children,
@@ -50,7 +50,7 @@ export default function DashboardLayout({
             <Link href="/dashboard/raw-material"><FaBoxes className="w-4 h-4" /> Inventorio</Link>
           </li>
           <li>
-            <Link href="/dashboard/warehouses"><FaWarehouse className="w-4 h-4" /> Almacenes</Link>
+            <Link href="/dashboard/locations"><FaMapMarkerAlt className="w-4 h-4" /> Ubicaciones</Link>
           </li>
 
           <li>
