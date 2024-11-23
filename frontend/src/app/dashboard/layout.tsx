@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { FaHome, FaShoppingCart, FaStore, FaExchangeAlt, FaBoxes, FaWarehouse, FaUsers, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 
 export default function DashboardLayout({
   children,
@@ -34,22 +35,36 @@ export default function DashboardLayout({
             </div>
           </li>
           <li>
-            <a href="/dashboard">Dashboard</a>
+            <Link href="/dashboard"><FaHome className="w-4 h-4" /> Dashboard</Link>
           </li>
           <li>
-            <a href="/dashboard/users">Usuarios</a>
+            <Link href="/dashboard/purchase-orders"><FaShoppingCart className="w-4 h-4" /> Ordenes de compra</Link>
           </li>
           <li>
-            <a href="/dashboard/perfil">Perfil</a>
+            <Link href="/dashboard/sales-orders"><FaStore className="w-4 h-4" /> Ordenes de venta</Link>
           </li>
-          <Link href="/dashboard/raw-material" className="btn btn-ghost">
-            JewelChain
-          </Link>
+          <li>
+            <Link href="/dashboard/transactions"><FaExchangeAlt className="w-4 h-4" /> Transacciones</Link>
+          </li>
+          <li>
+            <Link href="/dashboard/raw-material"><FaBoxes className="w-4 h-4" /> Inventorio</Link>
+          </li>
+          <li>
+            <Link href="/dashboard/warehouses"><FaWarehouse className="w-4 h-4" /> Almacenes</Link>
+          </li>
+
+          <li>
+            <Link href="/dashboard/users"><FaUsers className="w-4 h-4" /> Usuarios</Link>
+          </li>
+          <li>
+            <Link href="/dashboard/my-account"><FaUserCircle className="w-4 h-4" /> Mi cuenta</Link>
+          </li>
+
           {/* Agrega más elementos del menú según necesites */}
           <div className="mt-auto">
             <li>
               <button onClick={disconnect} className="btn btn-outline w-full">
-                Cerrar Sesión
+                <FaSignOutAlt className="w-4 h-4" /> Cerrar Sesión
               </button>
             </li>
           </div>
