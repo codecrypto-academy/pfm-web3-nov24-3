@@ -34,7 +34,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!isConnected || !user) {
-      router.push("/unauthenticated");
+      router.push("/");
       return;
     }
 
