@@ -1,34 +1,53 @@
 "use client";
 
-import { useAuthorization } from "@/hooks/useAuthorization";
+import { usePermissions } from "@/hooks/usePermissions";
 import { RawMineralTable } from "@/components/RawMineral/RawMineralTable";
 import { FaPlus } from "react-icons/fa";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useRawMineralService } from "@/hooks/raw-mineral/useRawMineral";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RawMaterial() {
+  const router = useRouter();
   const { provider, user } = useAuth();
-  const isAuthorized = useAuthorization([
-    "ADMIN_ROLE",
-    "RAW_MINERAL_ROLE"
-  ]);
+  const { canAccessRawMaterial, isLoading: isLoadingPermissions } = usePermissions();
+  const [isChecking, setIsChecking] = useState(true);
 
   const {
     rawMineralList,
-    isLoading,
+    isLoading: isLoadingMinerals,
     error,
     getAllRawMineral
   } = useRawMineralService(provider, user?.address);
 
   useEffect(() => {
-    if (user?.address) {
-      getAllRawMineral();
-    }
-  }, [user?.address, getAllRawMineral]);
+    console.log('RawMaterial - User:', user);
+    console.log('RawMaterial - Can Access:', canAccessRawMaterial);
+    console.log('RawMaterial - Is Loading Permissions:', isLoadingPermissions);
 
-  if (!isAuthorized) {
+    if (!isLoadingPermissions) {
+      setIsChecking(false);
+      if (!canAccessRawMaterial) {
+        console.log('RawMaterial - Redirecting to unauthorized');
+        router.push('/unauthorized');
+      } else if (user?.address) {
+        console.log('RawMaterial - Loading minerals');
+        getAllRawMineral();
+      }
+    }
+  }, [user, canAccessRawMaterial, isLoadingPermissions, router, getAllRawMineral]);
+
+  if (isChecking || isLoadingPermissions) {
+    return (
+      <div className="flex justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (!canAccessRawMaterial) {
     return null;
   }
 
@@ -49,7 +68,7 @@ export default function RawMaterial() {
         </Link>
       </div>
       
-      {isLoading ? (
+      {isLoadingMinerals ? (
         <div className="flex justify-center">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
