@@ -23,17 +23,11 @@ export default function RawMaterial() {
   } = useRawMineralService(provider, user?.address);
 
   useEffect(() => {
-    console.log('RawMaterial - User:', user);
-    console.log('RawMaterial - Can Access:', canAccessRawMaterial);
-    console.log('RawMaterial - Is Loading Permissions:', isLoadingPermissions);
-
     if (!isLoadingPermissions) {
       setIsChecking(false);
       if (!canAccessRawMaterial) {
-        console.log('RawMaterial - Redirecting to unauthorized');
         router.push('/unauthorized');
       } else if (user?.address) {
-        console.log('RawMaterial - Loading minerals');
         getAllRawMineral();
       }
     }

@@ -146,7 +146,7 @@ export default function DashboardLayout({
             <Link href="/dashboard/my-account">
               <FaUserCircle className="w-4 h-4" /> Mi cuenta 
               <p className="text-xs text-gray-500">
-                {user?.role} - {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
+                Wallet: {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
               </p>
             </Link>
           </li>
