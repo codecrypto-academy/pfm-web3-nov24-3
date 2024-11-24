@@ -1,8 +1,10 @@
 "use client";
 
-import { User, UserRole } from "@/types/user";
-import Link from "next/link";
+import { User } from "@/types/user";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import Link from "next/link";
+import { getRoleBadgeColor, getRoleLabel, getRoleIcon } from "@/utils/roleUtils";
+import React from "react";
 
 export function UserTable() {
   // TODO: Reemplazar con datos reales de tu API/Smart Contract
@@ -37,10 +39,15 @@ export function UserTable() {
         <tbody>
           {users.map((user) => (
             <tr key={user.address}>
-              <td>{user.address}</td>
+              <td>
+                <code className="text-sm bg-base-200 p-1 rounded">
+                  {user.address}
+                </code>
+              </td>
               <td>{user.name}</td>
               <td>
                 <span className={`badge ${getRoleBadgeColor(user.role)}`}>
+                  {React.createElement(getRoleIcon(user.role), { className: "w-4 h-4 mr-1" })}
                   {getRoleLabel(user.role)}
                 </span>
               </td>
@@ -75,32 +82,4 @@ export function UserTable() {
       </table>
     </div>
   );
-}
-
-function getRoleBadgeColor(role: UserRole): string {
-  switch (role) {
-    case "ADMIN_ROLE":
-      return "badge-primary";
-    case "RAW_MINERAL_ROLE":
-      return "badge-secondary";
-    case "JEWEL_FACTORY_ROLE":
-      return "badge-accent";
-    case "DISTRIBUTOR_ROLE":
-      return "badge-info";
-    case "STORE_ROLE":
-      return "badge-success";
-    default:
-      return "badge-ghost";
-  }
-}
-
-function getRoleLabel(role: UserRole): string {
-  const labels = {
-    ADMIN_ROLE: "Administrador",
-    RAW_MINERAL_ROLE: "Minero",
-    JEWEL_FACTORY_ROLE: "Fabricante",
-    DISTRIBUTOR_ROLE: "Distribuidor",
-    STORE_ROLE: "Tienda"
-  };
-  return labels[role];
 } 

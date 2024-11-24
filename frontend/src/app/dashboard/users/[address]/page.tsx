@@ -2,8 +2,9 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { UserDetail } from "@/types/user";
-import { formatDate } from "@/utils/dateUtils";
+import { UserDetail, UserRole } from "@/types/user";
+import { getRoleBadgeColor, getRoleLabel, getRoleIcon } from "@/utils/roleUtils";
+import React from "react";
 
 export default function UserDetails({ params }: { params: { address: string } }) {
   const { user } = useAuth();
@@ -41,11 +42,18 @@ export default function UserDetails({ params }: { params: { address: string } })
           <div className="card-body">
             <h2 className="card-title">Información General</h2>
             <div className="space-y-2">
-              <p><span className="font-bold">Dirección:</span> {userDetails.address}</p>
+              <p>
+                <span className="font-bold">Dirección:</span>
+                <br />
+                <code className="text-sm bg-base-200 p-1 rounded">
+                  {userDetails.address}
+                </code>
+              </p>
               <p><span className="font-bold">Nombre:</span> {userDetails.name}</p>
               <p>
                 <span className="font-bold">Rol:</span>
                 <span className={`badge ${getRoleBadgeColor(userDetails.role)} ml-2`}>
+                  {React.createElement(getRoleIcon(userDetails.role), { className: "w-4 h-4 mr-1" })}
                   {getRoleLabel(userDetails.role)}
                 </span>
               </p>
@@ -83,31 +91,3 @@ export default function UserDetails({ params }: { params: { address: string } })
     </div>
   );
 }
-
-function getRoleBadgeColor(role: UserRole): string {
-  switch (role) {
-    case "ADMIN_ROLE":
-      return "badge-primary";
-    case "RAW_MINERAL_ROLE":
-      return "badge-secondary";
-    case "JEWEL_FACTORY_ROLE":
-      return "badge-accent";
-    case "DISTRIBUTOR_ROLE":
-      return "badge-info";
-    case "STORE_ROLE":
-      return "badge-success";
-    default:
-      return "badge-ghost";
-  }
-}
-
-function getRoleLabel(role: UserRole): string {
-  const labels = {
-    ADMIN_ROLE: "Administrador",
-    RAW_MINERAL_ROLE: "Minero",
-    JEWEL_FACTORY_ROLE: "Fabricante",
-    DISTRIBUTOR_ROLE: "Distribuidor",
-    STORE_ROLE: "Tienda"
-  };
-  return labels[role];
-} 
