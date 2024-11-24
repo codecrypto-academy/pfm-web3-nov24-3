@@ -3,7 +3,7 @@ import "dotenv/config";
 import { USER_ABI } from "./abis/user.js";
 const PROVIDER = new ethers.JsonRpcProvider(process.env.PROVIDER);
 
-const ADDRESS_CONTRACT = "0x5f474bC674b6Ad4d7b6A5c6429d586D53053DA33";
+const ADDRESS_CONTRACT = process.env.USER_CONTRACT_ADDRESS;
 
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, PROVIDER);
 
