@@ -31,8 +31,9 @@ export default function DashboardLayout({
         <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
           <li className="mb-4">
             <div className="font-bold">
-              Wallet: {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
+              JewelChain Traceability Panel
             </div>
+            
           </li>
           <li>
             <Link href="/dashboard"><FaHome className="w-4 h-4" /> Dashboard</Link>
@@ -57,7 +58,9 @@ export default function DashboardLayout({
             <Link href="/dashboard/users"><FaUsers className="w-4 h-4" /> Usuarios</Link>
           </li>
           <li>
-            <Link href="/dashboard/my-account"><FaUserCircle className="w-4 h-4" /> Mi cuenta</Link>
+            <Link href="/dashboard/my-account"><FaUserCircle className="w-4 h-4" /> Mi cuenta 
+            <p className="text-xs text-gray-500">Wallet: {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}</p>
+            </Link>
           </li>
 
           {/* Agrega más elementos del menú según necesites */}
