@@ -1,28 +1,85 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { User } from "@/types/user";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import Link from "next/link";
-import { getRoleBadgeColor, getRoleLabel, getRoleIcon } from "@/utils/roleUtils";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { getRoleBadgeColor, getRoleIcon, getRoleLabel } from "@/utils/roleUtils";
+import { ethers } from "ethers";
+import { USER_ABI } from "@/lib/abi/user";
 import React from "react";
+import { useAuth } from "@/context/AuthContext";
+
+const mapRole = (roleHash: string): string => {
+  const roles = {
+    [ethers.keccak256(ethers.toUtf8Bytes("ADMIN_ROLE"))]: "ADMIN_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("RAW_MINERAL"))]: "RAW_MINERAL_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("JEWEL_FACTORY"))]: "JEWEL_FACTORY_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("DISTRIBUTOR"))]: "DISTRIBUTOR_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("STORE"))]: "STORE_ROLE",
+  };
+  return roles[roleHash] || "UNKNOWN_ROLE";
+};
 
 export function UserTable() {
-  // TODO: Reemplazar con datos reales de tu API/Smart Contract
-  const users: User[] = [
-    {
-      address: "0x1234...5678",
-      role: "ADMIN_ROLE",
-      isActive: true,
-      name: "Admin Usuario",
-    },
-    {
-      address: "0x8765...4321",
-      role: "STORE_ROLE",
-      isActive: true,
-      name: "Tienda Principal",
-    },
-    // Más usuarios...
-  ];
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { provider } = useAuth();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        if (!provider) {
+          throw new Error("No hay conexión con el proveedor");
+        }
+
+        const signer = await provider.getSigner();
+        const ADDRESS = process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS;
+        
+        if (!ADDRESS) {
+          throw new Error("La dirección del contrato no está definida");
+        }
+
+        const contract = new ethers.Contract(ADDRESS, USER_ABI, signer);
+        const userList = await contract.getListUsers();
+
+        const mappedUsers: User[] = userList.map((user: User) => ({
+          address: user.user,
+          role: mapRole(user.role),
+          isActive: user.isActive,
+          name: user.name
+        }));
+
+        setUsers(mappedUsers);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error al obtener usuarios:", err);
+        setError(err instanceof Error ? err.message : "Error desconocido");
+        setIsLoading(false);
+      }
+    };
+
+    if (provider) {
+      fetchUsers();
+    }
+  }, [provider]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-error">
+        <p>Error al cargar los usuarios: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-x-auto">

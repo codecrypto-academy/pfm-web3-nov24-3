@@ -50,6 +50,7 @@ export const usePermissions = () => {
         }
       } catch (error) {
         setIsLoading(false);
+        console.log(error);
       }
     };
 

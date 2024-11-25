@@ -4,6 +4,7 @@ import { useAuthorization } from "@/hooks/useAuthorization";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UserRole } from "@/types/user";
+import { getRoleLabel } from "@/utils/roleUtils";
 
 export default function NewUser() {
   const router = useRouter();
@@ -119,14 +120,3 @@ export default function NewUser() {
     </div>
   );
 }
-
-function getRoleLabel(role: UserRole): string {
-  const labels = {
-    ADMIN_ROLE: "Administrador",
-    RAW_MINERAL_ROLE: "Minero",
-    JEWEL_FACTORY_ROLE: "Fabricante",
-    DISTRIBUTOR_ROLE: "Distribuidor",
-    STORE_ROLE: "Tienda"
-  };
-  return labels[role];
-} 

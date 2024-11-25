@@ -1,13 +1,11 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { formatDate } from "@/utils/dateUtils";
 import { PurchaseOrderDetail } from "@/types/purchaseOrder";
 
 export default function PurchaseOrderDetails({ params }: { params: { id: string } }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const router = useRouter();
 
   // TODO: Reemplazar con datos reales

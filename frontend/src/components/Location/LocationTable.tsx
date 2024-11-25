@@ -77,7 +77,7 @@ export function LocationTable() {
                   <div className="text-sm opacity-60">{location.responsible.contact}</div>
                 </div>
               </td>
-              <td>{formatDate(location.lastUpdate, true)}</td>
+              <td>{formatDate(location.lastUpdate)}</td>
               <td>
                 <span className={`badge ${getStatusBadgeColor(location.status)}`}>
                   {getStatusLabel(location.status)}
