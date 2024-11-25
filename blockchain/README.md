@@ -2,8 +2,8 @@
 
 ## Smart contracts
 
-- UserJewelChain: "0x5f474bC674b6Ad4d7b6A5c6429d586D53053DA33"
-- RawMineral: "0x1Da1e5EE07AD91E402BD4Fc14773f7a4caa6b2ad"
+- UserJewelChain: "0x31BFc5d6C8FfA2F83e0d7f125C49047de3f76fb6"
+- RawMineral: "0x4EE02C9411818ca5aD92B46a115560c56667bF09"
 
 
 ## Instalación
