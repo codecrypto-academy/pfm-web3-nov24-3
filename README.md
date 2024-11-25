@@ -1,5 +1,34 @@
 # JewelChain
 
+- Proyecto trazabilidad sobre Joyas
+
+- Trabajamos en la blockchain Polygon:
+  - Tecnologia -> Blockchain EVM, la cual ambos sabes trabajar con solidity
+  - Fees -> Baratas
+  - ERC-20 -> Porque no solo queremos trazar
+- Defillama
+  
+![EVM](/imgs/evm.png)
+![usdt](/imgs/usdt.png)
+
+- Fees Now
+![fess](/imgs/fees.png)
+
+
+- Roles
+![roles](/imgs/flujo_basico.png.png)
+
+
+- Diagramas smart contract
+
+![jewel](/imgs/ijewel-chain.png)
+![user](/imgs/iuser.png)
+![distributor](/imgs/idistributor.png)
+
+
+
+
+
 ## Usuarios Anvil
 
 (0) 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000.000000000000000000 ETH)  --- ROLE: RAW_MINERAL
