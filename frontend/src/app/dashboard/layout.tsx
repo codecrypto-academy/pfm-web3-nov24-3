@@ -4,7 +4,17 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { FaHome, FaShoppingCart, FaStore, FaExchangeAlt, FaBoxes, FaUsers, FaUserCircle, FaSignOutAlt, FaMapMarkerAlt } from 'react-icons/fa';
+import {
+  FaHome,
+  FaShoppingCart,
+  FaStore,
+  FaExchangeAlt,
+  FaBoxes,
+  FaUsers,
+  FaUserCircle,
+  FaSignOutAlt,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 import { usePermissions } from "@/hooks/usePermissions";
 import { UserRole } from "@/types/user";
 
@@ -14,12 +24,35 @@ type RoutePermissions = {
 };
 
 const ROUTE_PERMISSIONS: RoutePermissions = {
-  '/dashboard/users': ['ADMIN_ROLE'],
-  '/dashboard/raw-material': ['ADMIN_ROLE', 'RAW_MINERAL_ROLE'],
-  '/dashboard/purchase-orders': ['ADMIN_ROLE', 'JEWEL_FACTORY_ROLE', 'DISTRIBUTOR_ROLE', 'STORE_ROLE'],
-  '/dashboard/sales-orders': ['ADMIN_ROLE', 'RAW_MINERAL_ROLE', 'JEWEL_FACTORY_ROLE', 'DISTRIBUTOR_ROLE', 'STORE_ROLE'],
-  '/dashboard/transactions': ['ADMIN_ROLE', 'RAW_MINERAL_ROLE', 'JEWEL_FACTORY_ROLE', 'DISTRIBUTOR_ROLE', 'STORE_ROLE'],
-  '/dashboard/locations': ['ADMIN_ROLE', 'RAW_MINERAL_ROLE', 'JEWEL_FACTORY_ROLE', 'DISTRIBUTOR_ROLE', 'STORE_ROLE'],
+  "/dashboard/users": ["ADMIN_ROLE"],
+  "/dashboard/raw-material": ["RAW_MINERAL_ROLE"],
+  "/dashboard/purchase-orders": [
+    "ADMIN_ROLE",
+    "JEWEL_FACTORY_ROLE",
+    "DISTRIBUTOR_ROLE",
+    "STORE_ROLE",
+  ],
+  "/dashboard/sales-orders": [
+    "ADMIN_ROLE",
+    "RAW_MINERAL_ROLE",
+    "JEWEL_FACTORY_ROLE",
+    "DISTRIBUTOR_ROLE",
+    "STORE_ROLE",
+  ],
+  "/dashboard/transactions": [
+    "ADMIN_ROLE",
+    "RAW_MINERAL_ROLE",
+    "JEWEL_FACTORY_ROLE",
+    "DISTRIBUTOR_ROLE",
+    "STORE_ROLE",
+  ],
+  "/dashboard/locations": [
+    "ADMIN_ROLE",
+    "RAW_MINERAL_ROLE",
+    "JEWEL_FACTORY_ROLE",
+    "DISTRIBUTOR_ROLE",
+    "STORE_ROLE",
+  ],
 };
 
 export default function DashboardLayout({
@@ -38,14 +71,15 @@ export default function DashboardLayout({
       return;
     }
 
-    if (pathname !== '/dashboard' && pathname !== '/dashboard/my-account') {
-      const currentPath = Object.keys(ROUTE_PERMISSIONS).find(route => 
+    if (pathname !== "/dashboard" && pathname !== "/dashboard/my-account") {
+      const currentPath = Object.keys(ROUTE_PERMISSIONS).find((route) =>
         pathname.startsWith(route)
       );
-      
+
       if (currentPath) {
         const requiredRoles = ROUTE_PERMISSIONS[currentPath];
-        const hasPermission = requiredRoles.includes(user.role) || user.role === 'ADMIN_ROLE';
+        const hasPermission =
+          requiredRoles.includes(user.role) || user.role === "ADMIN_ROLE";
 
         if (!hasPermission) {
           router.push("/unauthorized");
@@ -72,7 +106,7 @@ export default function DashboardLayout({
   const hasRouteAccess = (route: string): boolean => {
     const requiredRoles = ROUTE_PERMISSIONS[route];
     if (!requiredRoles) return true; // Si no hay roles definidos, permitir acceso
-    return requiredRoles.includes(user.role) || user.role === 'ADMIN_ROLE';
+    return requiredRoles.includes(user.role) || user.role === "ADMIN_ROLE";
   };
 
   return (
@@ -85,16 +119,16 @@ export default function DashboardLayout({
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
         <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
           <li className="mb-4">
-            <div className="font-bold">
-              JewelChain Traceability Panel
-            </div>
+            <div className="font-bold">JewelChain Traceability Panel</div>
           </li>
 
           <li>
-            <Link href="/dashboard"><FaHome className="w-4 h-4" /> Dashboard</Link>
+            <Link href="/dashboard">
+              <FaHome className="w-4 h-4" /> Dashboard
+            </Link>
           </li>
 
-          {hasRouteAccess('/dashboard/purchase-orders') && (
+          {hasRouteAccess("/dashboard/purchase-orders") && (
             <li>
               <Link href="/dashboard/purchase-orders">
                 <FaShoppingCart className="w-4 h-4" /> Ordenes de compra
@@ -102,7 +136,7 @@ export default function DashboardLayout({
             </li>
           )}
 
-          {hasRouteAccess('/dashboard/sales-orders') && (
+          {hasRouteAccess("/dashboard/sales-orders") && (
             <li>
               <Link href="/dashboard/sales-orders">
                 <FaStore className="w-4 h-4" /> Ordenes de venta
@@ -110,7 +144,7 @@ export default function DashboardLayout({
             </li>
           )}
 
-          {hasRouteAccess('/dashboard/transactions') && (
+          {hasRouteAccess("/dashboard/transactions") && (
             <li>
               <Link href="/dashboard/transactions">
                 <FaExchangeAlt className="w-4 h-4" /> Transacciones
@@ -118,7 +152,7 @@ export default function DashboardLayout({
             </li>
           )}
 
-          {hasRouteAccess('/dashboard/raw-material') && (
+          {hasRouteAccess("/dashboard/raw-material") && (
             <li>
               <Link href="/dashboard/raw-material">
                 <FaBoxes className="w-4 h-4" /> Inventario
@@ -126,7 +160,7 @@ export default function DashboardLayout({
             </li>
           )}
 
-          {hasRouteAccess('/dashboard/locations') && (
+          {hasRouteAccess("/dashboard/locations") && (
             <li>
               <Link href="/dashboard/locations">
                 <FaMapMarkerAlt className="w-4 h-4" /> Ubicaciones
@@ -134,7 +168,7 @@ export default function DashboardLayout({
             </li>
           )}
 
-          {hasRouteAccess('/dashboard/users') && (
+          {hasRouteAccess("/dashboard/users") && (
             <li>
               <Link href="/dashboard/users">
                 <FaUsers className="w-4 h-4" /> Usuarios
@@ -144,9 +178,10 @@ export default function DashboardLayout({
 
           <li>
             <Link href="/dashboard/my-account">
-              <FaUserCircle className="w-4 h-4" /> Mi cuenta 
+              <FaUserCircle className="w-4 h-4" /> Mi cuenta
               <p className="text-xs text-gray-500">
-                Wallet: {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
+                Wallet: {user?.address?.slice(0, 6)}...
+                {user?.address?.slice(-4)}
               </p>
             </Link>
           </li>

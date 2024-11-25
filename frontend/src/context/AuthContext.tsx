@@ -9,9 +9,8 @@ import {
 } from "react";
 import { ethers } from "ethers";
 import { BrowserProvider } from "ethers";
-import { USER_ABI } from "@/lib/abi/user";
 import { User, UserRole } from "@/types/user";
-
+import { ABI_USER } from "@/abis/user";
 
 interface Roles {
   [key: string]: string;
@@ -19,10 +18,12 @@ interface Roles {
 
 const roles: Roles = {
   ADMIN_ROLE: ethers.keccak256(ethers.toUtf8Bytes("ADMIN_ROLE")),
-  RAW_MINERAL_ROLE: ethers.keccak256(ethers.toUtf8Bytes("RAW_MINERAL")),
-  JEWEL_FACTORY_ROLE: ethers.keccak256(ethers.toUtf8Bytes("JEWEL_FACTORY")),
-  DISTRIBUTOR_ROLE: ethers.keccak256(ethers.toUtf8Bytes("DISTRIBUTOR")),
-  STORE_ROLE: ethers.keccak256(ethers.toUtf8Bytes("STORE")),
+  RAW_MINERAL_ROLE: ethers.keccak256(ethers.toUtf8Bytes("RAW_MINERAL_ROLE")),
+  JEWEL_FACTORY_ROLE: ethers.keccak256(
+    ethers.toUtf8Bytes("JEWEL_FACTORY_ROLE")
+  ),
+  DISTRIBUTOR_ROLE: ethers.keccak256(ethers.toUtf8Bytes("DISTRIBUTOR_ROLE")),
+  STORE_ROLE: ethers.keccak256(ethers.toUtf8Bytes("STORE_ROLE")),
 };
 
 interface AuthContextType {
@@ -46,13 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (typeof window.ethereum !== "undefined") {
         const provider = new ethers.BrowserProvider(window.ethereum);
         setProvider(provider);
-        const accounts = await provider.send("eth_requestAccounts", []);
 
         window.ethereum.on("accountsChanged", handleAccountsChanged);
         const signer = await provider.getSigner();
-        const contract = new ethers.Contract(ADDRESS, USER_ABI, signer);
+        const contract = new ethers.Contract(ADDRESS, ABI_USER, signer);
         await contract
-          .getUser(accounts[0])
+          .loginUser()
           .then((user) => {
             if (!user[2]) {
               // Check if user is not active
@@ -95,7 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkConnection = async () => {
       if (localStorage.getItem("walletConnected") === "true") {
         await connect();
-        
       }
     };
     checkConnection();
@@ -115,10 +114,9 @@ export const useAuth = () => useContext(AuthContext);
 
 function getRoleName(roleHash: string): UserRole {
   for (const [roleName, hash] of Object.entries(roles)) {
-      if (hash === roleHash) {
-          return roleName as UserRole;
-      }
+    if (hash === roleHash) {
+      return roleName as UserRole;
+    }
   }
   return "UNKNOWN_ROLE"; // Devuelve un valor por defecto si no coincide ningún rol
 }
-
