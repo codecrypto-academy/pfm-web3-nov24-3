@@ -12,4 +12,17 @@ export interface User {
 export interface LoginCredentials {
   address: string;
   signature: string;
-} 
+}
+
+export interface UserSmartContract {
+  address: string;
+  role: string;
+  name: string;
+}
+
+export interface UserSCList {
+  user: string;
+  role: string;
+  isActive: boolean,
+  name: string;
+}

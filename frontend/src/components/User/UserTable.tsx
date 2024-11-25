@@ -3,20 +3,28 @@
 import { useEffect, useState } from "react";
 import { User } from "@/types/user";
 import Link from "next/link";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-import { getRoleBadgeColor, getRoleIcon, getRoleLabel } from "@/utils/roleUtils";
+import { FaEye, FaEdit } from "react-icons/fa";
+import {
+  getRoleBadgeColor,
+  getRoleIcon,
+  getRoleLabel,
+} from "@/utils/roleUtils";
 import { ethers } from "ethers";
 import { USER_ABI } from "@/lib/abi/user";
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
+import { UserDeleteButton } from "./UserDeleteButton";
 
 const mapRole = (roleHash: string): string => {
   const roles = {
     [ethers.keccak256(ethers.toUtf8Bytes("ADMIN_ROLE"))]: "ADMIN_ROLE",
-    [ethers.keccak256(ethers.toUtf8Bytes("RAW_MINERAL"))]: "RAW_MINERAL_ROLE",
-    [ethers.keccak256(ethers.toUtf8Bytes("JEWEL_FACTORY"))]: "JEWEL_FACTORY_ROLE",
-    [ethers.keccak256(ethers.toUtf8Bytes("DISTRIBUTOR"))]: "DISTRIBUTOR_ROLE",
-    [ethers.keccak256(ethers.toUtf8Bytes("STORE"))]: "STORE_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("RAW_MINERAL_ROLE"))]:
+      "RAW_MINERAL_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("JEWEL_FACTORY_ROLE"))]:
+      "JEWEL_FACTORY_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("DISTRIBUTOR_ROLE"))]:
+      "DISTRIBUTOR_ROLE",
+    [ethers.keccak256(ethers.toUtf8Bytes("STORE_ROLE"))]: "STORE_ROLE",
   };
   return roles[roleHash] || "UNKNOWN_ROLE";
 };
@@ -25,6 +33,7 @@ export function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const { provider } = useAuth();
 
   useEffect(() => {
@@ -36,7 +45,7 @@ export function UserTable() {
 
         const signer = await provider.getSigner();
         const ADDRESS = process.env.NEXT_PUBLIC_USER_CONTRACT_ADDRESS;
-        
+
         if (!ADDRESS) {
           throw new Error("La dirección del contrato no está definida");
         }
@@ -48,7 +57,7 @@ export function UserTable() {
           address: user.user,
           role: mapRole(user.role),
           isActive: user.isActive,
-          name: user.name
+          name: user.name,
         }));
 
         setUsers(mappedUsers);
@@ -64,6 +73,11 @@ export function UserTable() {
       fetchUsers();
     }
   }, [provider]);
+
+  const handleDelete = (address: string) => {
+    const usersD = users.filter((user) => user.address !== address);
+    setUsers(usersD);
+  };
 
   if (isLoading) {
     return (
@@ -104,13 +118,19 @@ export function UserTable() {
               <td>{user.name}</td>
               <td>
                 <span className={`badge ${getRoleBadgeColor(user.role)}`}>
-                  {React.createElement(getRoleIcon(user.role), { className: "w-4 h-4 mr-1" })}
+                  {React.createElement(getRoleIcon(user.role), {
+                    className: "w-4 h-4 mr-1",
+                  })}
                   {getRoleLabel(user.role)}
                 </span>
               </td>
               <td>
-                <span className={`badge ${user.isActive ? 'badge-success' : 'badge-error'}`}>
-                  {user.isActive ? 'Activo' : 'Inactivo'}
+                <span
+                  className={`badge ${
+                    user.isActive ? "badge-success" : "badge-error"
+                  }`}
+                >
+                  {user.isActive ? "Activo" : "Inactivo"}
                 </span>
               </td>
               <td className="space-x-2">
@@ -126,12 +146,10 @@ export function UserTable() {
                 >
                   <FaEdit className="w-4 h-4" />
                 </Link>
-                <button
-                  onClick={() => {/* TODO: Implementar eliminación */}}
-                  className="btn btn-sm btn-ghost text-error"
-                >
-                  <FaTrash className="w-4 h-4" />
-                </button>
+                <UserDeleteButton
+                  address={user.address}
+                  onDeleteUser={handleDelete}
+                />
               </td>
             </tr>
           ))}
@@ -139,4 +157,4 @@ export function UserTable() {
       </table>
     </div>
   );
-} 
+}

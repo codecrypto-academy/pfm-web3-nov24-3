@@ -8,7 +8,7 @@ contract DeployRawMineral is Script {
     function run() external {
         vm.startBroadcast();
 
-        address userAddressSC = 0x5f474bC674b6Ad4d7b6A5c6429d586D53053DA33;
+        address userAddressSC = 0x31BFc5d6C8FfA2F83e0d7f125C49047de3f76fb6;
         new RawMineral(userAddressSC);
 
         vm.stopBroadcast();
