@@ -4,15 +4,20 @@ import { FaTrash } from "react-icons/fa";
 
 interface UserDeleteButtonProps {
   address: string;
+  onDeleteUser: (address: string) => void;
 }
 
-export const UserDeleteButton = ({ address }: UserDeleteButtonProps) => {
+export const UserDeleteButton = ({
+  address,
+  onDeleteUser,
+}: UserDeleteButtonProps) => {
   const { provider } = useAuth();
 
   const { isLoading, deleteUser } = useUserService(provider);
 
   const handleDeleteUser = async () => {
     await deleteUser(address);
+    onDeleteUser(address);
   };
 
   return (

@@ -44,10 +44,6 @@ export const useUserService = (provider: BrowserProvider | null) => {
     try {
       setIsLoading(true);
       await userService.deleteUser(address);
-      const usersListRemoved: User[] = userList.filter(
-        (user) => user.address !== address
-      );
-      setUserList(usersListRemoved);
     } catch (error) {
       console.error("Error deleteUser", error);
     } finally {
