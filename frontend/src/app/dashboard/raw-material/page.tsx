@@ -1,122 +1,74 @@
 "use client";
 
-import { InputForm } from "@/components/input/InputFrom";
+import { usePermissions } from "@/hooks/usePermissions";
 import { RawMineralTable } from "@/components/RawMineral/RawMineralTable";
+import { FaPlus } from "react-icons/fa";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useRawMineralService } from "@/hooks/raw-mineral/useRawMineral";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RawMaterial() {
+  const router = useRouter();
   const { provider, user } = useAuth();
+  const { canAccessRawMaterial, isLoading: isLoadingPermissions } = usePermissions();
+  const [isChecking, setIsChecking] = useState(true);
 
-  const { rawMineralList, isLoading, getAllRawMineral, createRawMineral } =
-    useRawMineralService(provider, user?.address);
-
-  const [name, setName] = useState<string>("");
-  const [date, setDate] = useState<string>("");
-  const [quantity, setQuantity] = useState<number | null>(null);
-  const [quality, setQuality] = useState<number | null>(null);
-  const [origin, setOrigin] = useState<string>("");
+  const {
+    rawMineralList,
+    isLoading: isLoadingMinerals,
+    error,
+    getAllRawMineral
+  } = useRawMineralService(provider, user?.address);
 
   useEffect(() => {
-    if (provider) {
-      getAllRawMineral();
+    if (!isLoadingPermissions) {
+      setIsChecking(false);
+      if (!canAccessRawMaterial) {
+        router.push('/unauthorized');
+      } else if (user?.address) {
+        getAllRawMineral();
+      }
     }
-  }, [provider, getAllRawMineral]);
+  }, [user, canAccessRawMaterial, isLoadingPermissions, router, getAllRawMineral]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const dat = new Date(date).getTime() / 1000;
-      const txHash = await createRawMineral({
-        name,
-        date: dat,
-        quantity: quantity || 0,
-        quality: quality || 0,
-        origin,
-      });
+  if (isChecking || isLoadingPermissions) {
+    return (
+      <div className="flex justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
-      console.log("txHash: ", txHash);
-      setName("");
-      setDate("");
-      setQuantity(null);
-      setQuality(null);
-      setOrigin("");
-      getAllRawMineral();
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
+  if (!canAccessRawMaterial) {
+    return null;
+  }
+
+  if (error) {
+    return <div className="alert alert-error">{error}</div>;
+  }
 
   return (
-    <Fragment>
-      <div className="card bg-base-100 w-96 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Crear un nuevo mineral</h2>
-          <form onSubmit={handleSubmit}>
-            <InputForm
-              label="Nombre mineral"
-              type="text"
-              name="name"
-              placeholder="Ingrese el nombre del mineral"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required={true}
-            />
-            <InputForm
-              label="Fecha creación"
-              type="date"
-              name="date"
-              placeholder="Fecha"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required={true}
-            />
-            <InputForm
-              label="Cantidad"
-              type="number"
-              name="quantity"
-              placeholder="Cantidad"
-              value={quantity !== null ? String(quantity) : ""}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              required={true}
-            />
-            <InputForm
-              label="Pureza"
-              type="number"
-              name="quality"
-              placeholder="Pureza"
-              value={quality !== null ? String(quality) : ""}
-              onChange={(e) => setQuality(Number(e.target.value))}
-              required={true}
-            />
-            <InputForm
-              label="Origen"
-              type="text"
-              name="origin"
-              placeholder="Origen"
-              value={origin}
-              onChange={(e) => setOrigin(e.target.value)}
-              required={true}
-            />
-            <div className="card-actions justify-end mt-3">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isLoading}
-              >
-                Nuevo
-                {isLoading && <span className="loading loading-spinner"></span>}
-              </button>
-            </div>
-          </form>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Inventario Minerales</h1>
+        <Link 
+          href="/dashboard/raw-material/new" 
+          className="btn btn-primary"
+        >
+          <FaPlus className="w-4 h-4 mr-2" />
+          Nuevo Mineral
+        </Link>
+      </div>
+      
+      {isLoadingMinerals ? (
+        <div className="flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
         </div>
-      </div>
-      <div>
-        {rawMineralList.length > 0 && (
-          <RawMineralTable rawMineralList={rawMineralList} />
-        )}
-      </div>
-    </Fragment>
+      ) : (
+        <RawMineralTable rawMineralList={rawMineralList} />
+      )}
+    </div>
   );
 }
