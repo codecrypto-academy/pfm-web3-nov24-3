@@ -95,9 +95,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkConnection = async () => {
       if (localStorage.getItem("walletConnected") === "true") {
         await connect();
+        
       }
     };
     checkConnection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

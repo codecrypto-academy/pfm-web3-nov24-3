@@ -2,8 +2,6 @@
 
 import { useAuthorization } from "@/hooks/useAuthorization";
 import { TransactionTable } from "@/components/Transaction/TransactionTable";
-import { FaPlus } from "react-icons/fa";
-import Link from "next/link";
 
 export default function Transactions() {
   const isAuthorized = useAuthorization([

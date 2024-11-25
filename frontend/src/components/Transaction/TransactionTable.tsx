@@ -43,7 +43,7 @@ export function TransactionTable() {
           {transactions.map((transaction) => (
             <tr key={transaction.id}>
               <td>{transaction.id}</td>
-              <td>{formatDate(transaction.date, true)}</td>
+              <td>{formatDate(transaction.date)}</td>
               <td>
                 <span className={`badge ${getTypeBadgeColor(transaction.type)}`}>
                   {transaction.type}

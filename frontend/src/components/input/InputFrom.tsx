@@ -3,9 +3,11 @@ interface InputFormProps {
   name: string;
   placeholder: string;
   type: string;
-  required: boolean;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  min?: number;    // Añadir esta línea
+  max?: number;    // Añadir esta línea
 }
 
 export const InputForm = ({

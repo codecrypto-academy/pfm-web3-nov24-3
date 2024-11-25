@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
 import { User } from "@/types/user";
-import { FaUserCircle, FaEdit, FaCheckCircle } from "react-icons/fa";
+import { FaEdit, FaCheckCircle } from "react-icons/fa";
 import { getRoleBadgeColor, getRoleLabel, getRoleIcon } from "@/utils/roleUtils";
 import React from "react";
 

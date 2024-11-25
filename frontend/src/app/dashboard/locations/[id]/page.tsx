@@ -1,13 +1,12 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/dateUtils";
 import { LocationDetail } from "@/types/location";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 export default function LocationDetails({ params }: { params: { id: string } }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const router = useRouter();
 
   // TODO: Reemplazar con datos reales
@@ -58,7 +57,7 @@ export default function LocationDetails({ params }: { params: { id: string } }) 
               <p><span className="font-bold">ID:</span> {locationDetails.id}</p>
               <p><span className="font-bold">Tipo:</span> {locationDetails.type}</p>
               <p><span className="font-bold">Estado:</span> {locationDetails.status}</p>
-              <p><span className="font-bold">Última Actualización:</span> {formatDate(locationDetails.lastUpdate, true)}</p>
+              <p><span className="font-bold">Última Actualización:</span> {formatDate(locationDetails.lastUpdate)}</p>
             </div>
           </div>
         </div>
