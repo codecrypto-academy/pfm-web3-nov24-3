@@ -1,28 +1,20 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { UserDetail, UserRole } from "@/types/user";
+import { User } from "@/types/user";
 import { getRoleBadgeColor, getRoleLabel, getRoleIcon } from "@/utils/roleUtils";
 import React from "react";
 
 export default function UserDetails({ params }: { params: { address: string } }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const router = useRouter();
 
   // TODO: Reemplazar con datos reales
-  const userDetails: UserDetail = {
+  const userDetails: User = {
     address: params.address,
     role: "STORE_ROLE",
     isActive: true,
     name: "Tienda Principal",
-    additionalInfo: {
-      email: "tienda@ejemplo.com",
-      phone: "+34 666 777 888",
-      lastLogin: new Date("2024-02-20T15:30:00"),
-      createdAt: new Date("2024-01-01"),
-      updatedAt: new Date("2024-02-20")
-    }
   };
 
   return (
@@ -71,8 +63,8 @@ export default function UserDetails({ params }: { params: { address: string } })
           <div className="card-body">
             <h2 className="card-title">Información de Contacto</h2>
             <div className="space-y-2">
-              <p><span className="font-bold">Email:</span> {userDetails.additionalInfo?.email}</p>
-              <p><span className="font-bold">Teléfono:</span> {userDetails.additionalInfo?.phone}</p>
+              {/*<p><span className="font-bold">Email:</span> {userDetails?.additionalInfo?.email}</p>*/}
+              {/*<p><span className="font-bold">Teléfono:</span> {userDetails?.additionalInfo?.phone}</p>*/}
             </div>
           </div>
         </div>
@@ -81,9 +73,9 @@ export default function UserDetails({ params }: { params: { address: string } })
           <div className="card-body">
             <h2 className="card-title">Actividad</h2>
             <div className="space-y-2">
-              <p><span className="font-bold">Último Acceso:</span> {userDetails.additionalInfo?.lastLogin && formatDate(userDetails.additionalInfo.lastLogin, true)}</p>
-              <p><span className="font-bold">Fecha de Creación:</span> {formatDate(userDetails.additionalInfo?.createdAt || new Date())}</p>
-              <p><span className="font-bold">Última Actualización:</span> {formatDate(userDetails.additionalInfo?.updatedAt || new Date())}</p>
+              {/*<p><span className="font-bold">Último Acceso:</span> {userDetails.additionalInfo?.lastLogin && formatDate(userDetails.additionalInfo.lastLogin, true)}</p>*/}
+              {/*<p><span className="font-bold">Fecha de Creación:</span> {formatDate(userDetails.additionalInfo?.createdAt || new Date())}</p>*/}
+              {/*<p><span className="font-bold">Última Actualización:</span> {formatDate(userDetails.additionalInfo?.updatedAt || new Date())}</p>*/}
             </div>
           </div>
         </div>

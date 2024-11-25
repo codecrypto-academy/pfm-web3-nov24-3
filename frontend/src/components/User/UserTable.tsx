@@ -44,7 +44,7 @@ export function UserTable() {
         const contract = new ethers.Contract(ADDRESS, USER_ABI, signer);
         const userList = await contract.getListUsers();
 
-        const mappedUsers: User[] = userList.map((user: any) => ({
+        const mappedUsers: User[] = userList.map((user: User) => ({
           address: user.user,
           role: mapRole(user.role),
           isActive: user.isActive,

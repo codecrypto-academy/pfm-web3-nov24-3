@@ -1,13 +1,12 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/dateUtils";
 import { TransactionDetail } from "@/types/transaction";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default function TransactionDetails({ params }: { params: { id: string } }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const router = useRouter();
 
   // TODO: Reemplazar con datos reales
@@ -60,7 +59,7 @@ export default function TransactionDetails({ params }: { params: { id: string } 
           <div className="card-body">
             <h2 className="card-title">Información General</h2>
             <div className="space-y-2">
-              <p><span className="font-bold">Fecha:</span> {formatDate(transactionDetails.date, true)}</p>
+              <p><span className="font-bold">Fecha:</span> {formatDate(transactionDetails.date)}</p>
               <p><span className="font-bold">Tipo:</span> {transactionDetails.type}</p>
               <p><span className="font-bold">Estado:</span> {transactionDetails.status}</p>
               <p><span className="font-bold">Origen:</span> {transactionDetails.origin}</p>
