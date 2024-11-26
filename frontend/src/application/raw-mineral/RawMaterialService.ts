@@ -57,6 +57,11 @@ export class RawMineralService {
     return rawMineral;
   }
 
+  public async orderMaterial(provider: string, uniqueId: string): Promise<string> {
+    const tx: TransactionReceipt = await this.rawMineralSC.orderMaterial(provider, uniqueId);
+    return tx.hash;
+  }
+
   private selectImgByName(name: string): string {
     const imgSrc: string | undefined = mapImg[name];
 

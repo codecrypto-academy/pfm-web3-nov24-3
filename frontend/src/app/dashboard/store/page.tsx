@@ -7,22 +7,26 @@ import { useAuth } from "@/context/AuthContext";
 import { RawMineralChain } from "@/domain/raw-mineral/RawMineral";
 import { useRawMineralService } from "@/hooks/raw-mineral/useRawMineral";
 import { User } from "@/types/user";
-import { Fragment, ReactNode } from "react";
+import { Fragment, ReactNode, useState } from "react";
 
 export default function Store() {
-  const { provider } = useAuth();
-  const { rawMineralList, isLoading, getAllRawMineral } =
+  const { provider, user } = useAuth();
+  const { rawMineralList, isLoading, getAllRawMineral, orderMineral } =
     useRawMineralService(provider);
+  const [userSelected, setUserSelected] = useState<string>("");
 
   const onChangeSelect = async (user: User) => {
-    console.log(user);
     if (user.role === "RAW_MINERAL_ROLE") {
       await getAllRawMineral(user.address);
+      setUserSelected(user.address);
     }
   };
 
-  const buyStore = (uniqueId: string) => {
-    console.log("uniqueId", uniqueId);
+  const buyStore = async (uniqueId: string) => {
+    if (user) {
+      await orderMineral(userSelected, uniqueId);
+      await getAllRawMineral(userSelected);
+    }
   };
 
   const descriptionRawMinerla = (rawMineral: RawMineralChain): ReactNode => {

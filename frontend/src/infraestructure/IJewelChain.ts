@@ -4,4 +4,5 @@ import { TransactionReceipt } from "ethers";
 export interface IJewelChain {
   createJewelRecord(jewelRawMineral: IJewelChainRequest): Promise<TransactionReceipt>;
   getJewelRecordBySupplier(providerAddress: string): Promise<IJewelChainResponse[]>;
+  orderMaterial(provider: string, uniqueId: string): Promise<TransactionReceipt>;
 }
