@@ -19,10 +19,17 @@ interface IJewelChain {
         bytes data; // se utiliza este ultimo campo para que cada extension puede extender la informacion que necesite.
     }
 
+    struct JewelToSend {
+        address to;
+        bytes32 uniqueId;
+        uint256 index;
+    }
+
     // Errors
     error RawMineral__UserInvalidAddress(address userAddress);
     error RawMineral__UserNotAuthorized(address userAddress);
     error RawMineral__SupplierIsNotRawMineral(address supplierAddress);
+    error RawMineral__UniqueIdNotFound(bytes32 uniqueId);
 
     /**
      * @dev Evento para la creación de un nuevo registro de trazabilidad.
@@ -46,8 +53,12 @@ interface IJewelChain {
     );
 
     event JewelChain_Recieve(
-        address indexed supplier, address indexed distributor, bytes32 indexed trackingId, JewelRecord[] jewelRecord
+        address indexed supplier, address indexed distributor, bytes32 indexed trackingId, JewelRecord jewelRecord
     );
+
+    event JewelChain_NewOrder(address indexed supplier, address indexed receiver, bytes32 indexed uniqueId);
+
+    event JewelChain__SendNewOrder(address indexed supplier, address indexed receiver, bytes32 indexed uniqueId);
 
     /**
      * @dev Función para crear un nuevo registro de trazabilidad.
@@ -68,6 +79,20 @@ interface IJewelChain {
     /**
      * @param jewels Array de registros de trazabilidad `JewelRecord`.
      */
-    function recieveMaterial(address distributor, address suplier, bytes32 trackingId, JewelRecord[] calldata jewels)
+    function recieveMaterial(address distributor, address suplier, bytes32 trackingId, bytes calldata jewels)
         external;
+
+    /**
+     * @dev Función para ordenar un material.
+     * @param supplier Dirección del proveedor del cual se desean consultar los registros.
+     * @param uniqueId id de una joya o mineral.
+     */
+    function orderMaterial(address supplier, bytes32 uniqueId) external;
+
+    /**
+     * @dev funcion que recupera todos los materiales de un supplier
+     */
+    function getOrderMaterialList() external view returns (JewelToSend[] memory);
+
+    function sendMaterial(address to, bytes32 uniqueId, uint256 indexOrder) external;
 }
