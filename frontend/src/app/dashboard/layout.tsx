@@ -14,6 +14,7 @@ import {
   FaUserCircle,
   FaSignOutAlt,
   FaMapMarkerAlt,
+  FaShoppingBag,
 } from "react-icons/fa";
 import { usePermissions } from "@/hooks/usePermissions";
 import { UserRole } from "@/types/user";
@@ -26,6 +27,7 @@ type RoutePermissions = {
 const ROUTE_PERMISSIONS: RoutePermissions = {
   "/dashboard/users": ["ADMIN_ROLE"],
   "/dashboard/raw-material": ["RAW_MINERAL_ROLE"],
+  "/dashboard/store": ["JEWEL_FACTORY_ROLE", "STORE_ROLE"],
   "/dashboard/purchase-orders": [
     "ADMIN_ROLE",
     "JEWEL_FACTORY_ROLE",
@@ -127,6 +129,15 @@ export default function DashboardLayout({
               <FaHome className="w-4 h-4" /> Dashboard
             </Link>
           </li>
+
+          {hasRouteAccess("/dashboard/store") && (
+            <li>
+              <Link href="/dashboard/store">
+                <FaShoppingBag className="w-4 h-4" />
+                Tienda
+              </Link>
+            </li>
+          )}
 
           {hasRouteAccess("/dashboard/purchase-orders") && (
             <li>

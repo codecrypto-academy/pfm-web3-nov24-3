@@ -8,16 +8,16 @@ import { RawMineralForm } from "@/domain/raw-mineral/RawMineral";
 import { InputForm } from "@/components/input/InputFrom";
 
 export default function NewRawMineral() {
-  const { provider, user } = useAuth();
+  const { provider } = useAuth();
   const router = useRouter();
-  const { createRawMineral, isLoading, error } = useRawMineralService(provider, user?.address);
+  const { createRawMineral, isLoading, error } = useRawMineralService(provider);
 
   const [formData, setFormData] = useState<RawMineralForm>({
     name: "",
     date: Date.now(),
     quantity: 0,
     quality: 0,
-    origin: ""
+    origin: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,10 +34,7 @@ export default function NewRawMineral() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Nuevo Mineral</h1>
-        <button 
-          onClick={() => router.back()} 
-          className="btn btn-outline"
-        >
+        <button onClick={() => router.back()} className="btn btn-outline">
           Volver
         </button>
       </div>
@@ -45,11 +42,7 @@ export default function NewRawMineral() {
       <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="alert alert-error">
-                {error}
-              </div>
-            )}
+            {error && <div className="alert alert-error">{error}</div>}
 
             <InputForm
               label="Nombre"
@@ -57,7 +50,9 @@ export default function NewRawMineral() {
               name="name"
               placeholder="Nombre del mineral"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required={true}
             />
 
@@ -67,7 +62,9 @@ export default function NewRawMineral() {
               name="quantity"
               placeholder="Cantidad"
               value={formData.quantity}
-              onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, quantity: Number(e.target.value) })
+              }
               required={true}
             />
 
@@ -77,7 +74,9 @@ export default function NewRawMineral() {
               name="quality"
               placeholder="Calidad"
               value={formData.quality}
-              onChange={(e) => setFormData({ ...formData, quality: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, quality: Number(e.target.value) })
+              }
               min={0}
               max={100}
               required={true}
@@ -89,7 +88,9 @@ export default function NewRawMineral() {
               name="origin"
               placeholder="Lugar de origen"
               value={formData.origin}
-              onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, origin: e.target.value })
+              }
               required={true}
             />
 
@@ -105,7 +106,7 @@ export default function NewRawMineral() {
                     Creando...
                   </>
                 ) : (
-                  'Crear Mineral'
+                  "Crear Mineral"
                 )}
               </button>
             </div>
@@ -114,4 +115,4 @@ export default function NewRawMineral() {
       </div>
     </div>
   );
-} 
+}

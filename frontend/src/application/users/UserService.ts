@@ -61,4 +61,25 @@ export class UserService {
     });
     return mappedUsers;
   }
+
+  public async listUserByRole(role: string): Promise<User[]> {
+
+    const users: UserSCList[] = await this.userSC.getUsersByRole(role);
+
+    return this.convertUserSCToUser(users);
+  }
+
+  private convertUserSCToUser(UserSCList: UserSCList[]): User[] {
+    const mappedUsers: User[] = UserSCList.map(user => {
+      return {
+        user: '',
+        address: user.user,
+        role: mapRole(user.role) as UserRole,
+        name: user.name,
+        companyName: '',
+        isActive: user.isActive
+      }
+    });
+    return mappedUsers;
+  }
 }

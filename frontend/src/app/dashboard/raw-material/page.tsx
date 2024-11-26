@@ -12,26 +12,33 @@ import { useRouter } from "next/navigation";
 export default function RawMaterial() {
   const router = useRouter();
   const { provider, user } = useAuth();
-  const { canAccessRawMaterial, isLoading: isLoadingPermissions } = usePermissions();
+  const { canAccessRawMaterial, isLoading: isLoadingPermissions } =
+    usePermissions();
   const [isChecking, setIsChecking] = useState(true);
 
   const {
     rawMineralList,
     isLoading: isLoadingMinerals,
     error,
-    getAllRawMineral
-  } = useRawMineralService(provider, user?.address);
+    getAllRawMineral,
+  } = useRawMineralService(provider);
 
   useEffect(() => {
     if (!isLoadingPermissions) {
       setIsChecking(false);
       if (!canAccessRawMaterial) {
-        router.push('/unauthorized');
+        router.push("/unauthorized");
       } else if (user?.address) {
-        getAllRawMineral();
+        getAllRawMineral(user?.address);
       }
     }
-  }, [user, canAccessRawMaterial, isLoadingPermissions, router, getAllRawMineral]);
+  }, [
+    user,
+    canAccessRawMaterial,
+    isLoadingPermissions,
+    router,
+    getAllRawMineral,
+  ]);
 
   if (isChecking || isLoadingPermissions) {
     return (
@@ -53,15 +60,12 @@ export default function RawMaterial() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Inventario Minerales</h1>
-        <Link 
-          href="/dashboard/raw-material/new" 
-          className="btn btn-primary"
-        >
+        <Link href="/dashboard/raw-material/new" className="btn btn-primary">
           <FaPlus className="w-4 h-4 mr-2" />
           Nuevo Mineral
         </Link>
       </div>
-      
+
       {isLoadingMinerals ? (
         <div className="flex justify-center">
           <span className="loading loading-spinner loading-lg"></span>

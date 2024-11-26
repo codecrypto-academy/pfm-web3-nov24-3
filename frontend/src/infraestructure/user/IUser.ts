@@ -5,4 +5,5 @@ export interface IUser {
   createUser(user: UserSmartContract): Promise<TransactionReceipt>;
   deleteUser(address: string): Promise<TransactionReceipt>;
   getUsersList(): Promise<UserSCList[]>;
+  getUsersByRole(role: string): Promise<UserSCList[]>;
 }
