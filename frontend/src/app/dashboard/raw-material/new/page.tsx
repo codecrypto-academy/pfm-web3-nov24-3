@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRawMineralService } from "@/hooks/raw-mineral/useRawMineral";
 import { RawMineralForm } from "@/domain/raw-mineral/RawMineral";
 import { InputForm } from "@/components/input/InputFrom";
+import { SelectForm } from "@/components/input/SelectFrom";
 
 export default function NewRawMineral() {
   const { provider } = useAuth();
@@ -44,11 +45,16 @@ export default function NewRawMineral() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="alert alert-error">{error}</div>}
 
-            <InputForm
-              label="Nombre"
-              type="text"
-              name="name"
-              placeholder="Nombre del mineral"
+            <SelectForm
+              label="Mineral"
+              name="mineral"
+              options={[
+                { value: "Oro", label: "Oro" },
+                { value: "Diamante", label: "Diamante" },
+                { value: "Zafiro", label: "Zafiro" },
+                { value: "Rubi", label: "Rubi" },
+                { value: "Plata", label: "Plata" },
+              ]}
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
