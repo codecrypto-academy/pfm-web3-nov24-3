@@ -11,7 +11,7 @@ import { Fragment, ReactNode, useState } from "react";
 
 export default function Store() {
   const { provider, user } = useAuth();
-  const { rawMineralList, isLoading, getAllRawMineral, orderMineral } =
+  const { rawMineralList, isLoading, getAllRawMineral } =
     useRawMineralService(provider);
   const [userSelected, setUserSelected] = useState<string>("");
 
@@ -22,9 +22,8 @@ export default function Store() {
     }
   };
 
-  const buyStore = async (uniqueId: string) => {
+  const buyStore = async () => {
     if (user) {
-      await orderMineral(userSelected, uniqueId);
       await getAllRawMineral(userSelected);
     }
   };
@@ -59,21 +58,22 @@ export default function Store() {
       <div>
         <UserSelect handlerSelect={onChangeSelect} />
       </div>
-      <div>{isLoading && <p className="text-center">Cargando...</p>}</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-        {!isLoading &&
-          rawMineralList.length > 0 &&
+        {rawMineralList.length > 0 &&
           rawMineralList.map((rawMineral) => (
             <div key={rawMineral.uniqueId}>
               <CardStore
+                uniqueId={rawMineral.uniqueId}
+                addressSuplier={userSelected}
                 description={descriptionRawMinerla(rawMineral)}
                 image={rawMineral.img}
                 name={rawMineral.name}
-                onSelect={() => buyStore(rawMineral.uniqueId)}
+                onSelect={buyStore}
               />
             </div>
           ))}
       </div>
+      <div>{isLoading && <p className="text-center">Cargando...</p>}</div>
     </div>
   );
 }

@@ -50,29 +50,11 @@ export const useRawMineralService = (provider: BrowserProvider | null) => {
     }
   }, []);
 
-  const orderMineral = useCallback(
-    async (address: string, uniqueId: string) => {
-      if (!rawMineralService) return;
-      try {
-        setIsLoading(true);
-        const txHash = await rawMineralService.orderMaterial(address, uniqueId);
-        return txHash;
-      } catch (err) {
-        console.error("Error to order mineral:", err);
-        setError("Error to order mineral");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
-
   return {
     rawMineralList,
     isLoading,
     error,
     getAllRawMineral,
     createRawMineral,
-    orderMineral,
   };
 };
