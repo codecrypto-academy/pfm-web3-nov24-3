@@ -1,48 +1,47 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { formatDate } from "@/utils/dateUtils";
-import { SalesOrderDetail } from "@/types/salesOrder";
+import { JewelOrder } from "@/domain/raw-mineral/RawMineral";
+import { useEffect, useState } from "react";
+import { useRawMineralOrders } from "@/hooks/raw-mineral/useRawMineralOrders";
+import { useAuth } from "@/context/AuthContext";
+import { ButtonLoading } from "@/components/button/ButtonLoading";
 
-export default function SalesOrderDetails({ params }: { params: { id: string } }) {
-  // const { user } = useAuth();
+const mapPrice: Record<string, number> = {
+  Diamante: 100,
+  Oro: 150,
+  Plata: 75,
+  Zafiro: 90,
+  Rubi: 85,
+};
+
+export default function SalesOrderDetails() {
+  const { provider } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isLoading, sendMaterial } = useRawMineralOrders(provider);
+  const [orderJewel, setOrderJewel] = useState<JewelOrder | null>(null);
 
-  // TODO: Reemplazar con datos reales
-  const orderDetails: SalesOrderDetail = {
-    id: params.id,
-    creationDate: new Date("2024-02-20"),
-    customer: "Cliente A",
-    products: "Anillo de Oro, Collar de Plata",
-    totalQuantity: 2,
-    status: "Pendiente",
-    paymentMethod: "Criptomoneda",
-    items: [
-      {
-        id: "ITEM-001",
-        productName: "Anillo de Oro 18k",
-        quantity: 1,
-        unit: "unidad",
-        price: 1500.00
-      },
-      {
-        id: "ITEM-002",
-        productName: "Collar de Plata 925",
-        quantity: 1,
-        unit: "unidad",
-        price: 500.00
-      }
-    ]
+  useEffect(() => {
+    const order = searchParams.get("order");
+    setOrderJewel(order ? JSON.parse(order) : null);
+  }, [searchParams]);
+
+  const handlerClick = async () => {
+    if (orderJewel) {
+      await sendMaterial(orderJewel.uniqueId, orderJewel.index);
+      router.back();
+    }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Detalles de Orden de Venta #{params.id}</h1>
-        <button 
-          onClick={() => router.back()} 
-          className="btn btn-outline"
-        >
+        <h1 className="text-2xl font-bold">
+          Detalles de Orden de Venta #{orderJewel?.uniqueId}
+        </h1>
+        <button onClick={() => router.back()} className="btn btn-outline">
           Volver
         </button>
       </div>
@@ -52,21 +51,48 @@ export default function SalesOrderDetails({ params }: { params: { id: string } }
           <div className="card-body">
             <h2 className="card-title">Información General</h2>
             <div className="space-y-2">
-              <p><span className="font-bold">Fecha de Creación:</span> {formatDate(orderDetails.creationDate)}</p>
-              <p><span className="font-bold">Cliente:</span> {orderDetails.customer}</p>
-              <p><span className="font-bold">Estado:</span> {orderDetails.status}</p>
-              <p><span className="font-bold">Método de Pago:</span> {orderDetails.paymentMethod}</p>
+              <p>
+                <span className="font-bold">Fecha de Creación:</span>{" "}
+                {orderJewel
+                  ? formatDate(new Date(Number(orderJewel.date)))
+                  : "-"}
+              </p>
+              <p>
+                <span className="font-bold">Cliente:</span> {orderJewel?.to}
+              </p>
+              <p>
+                <span className="font-bold">Estado:</span> Pendiente{" "}
+              </p>
+              <p>
+                <span className="font-bold">Método de Pago:</span> Crypto
+              </p>
             </div>
           </div>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
+          <div className="card-body justify-between">
             <h2 className="card-title">Resumen</h2>
             <div className="space-y-2">
-              <p><span className="font-bold">Cantidad Total:</span> {orderDetails.totalQuantity}</p>
-              <p><span className="font-bold">Valor Total:</span> ${orderDetails.items.reduce((acc, item) => acc + (item.quantity * item.price), 0).toFixed(2)}</p>
+              <p>
+                <span className="font-bold">Cantidad Total:</span>{" "}
+                {orderJewel?.quantity}
+              </p>
+              <p>
+                <span className="font-bold">Valor Total:</span> $
+                {orderJewel
+                  ? (
+                      (orderJewel.quantity as number) *
+                      priceJewels(orderJewel.name)
+                    ).toFixed(2)
+                  : 0}
+              </p>
             </div>
+            <ButtonLoading
+              isLoading={isLoading}
+              handelerClick={handlerClick}
+              label={"Vender"}
+            />
           </div>
         </div>
       </div>
@@ -80,21 +106,27 @@ export default function SalesOrderDetails({ params }: { params: { id: string } }
                 <tr>
                   <th>Producto</th>
                   <th>Cantidad</th>
-                  <th>Unidad</th>
                   <th>Precio Unitario</th>
                   <th>Subtotal</th>
                 </tr>
               </thead>
               <tbody>
-                {orderDetails.items.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.productName}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.unit}</td>
-                    <td>${item.price.toFixed(2)}</td>
-                    <td>${(item.quantity * item.price).toFixed(2)}</td>
-                  </tr>
-                ))}
+                <tr>
+                  <td>{orderJewel?.name}</td>
+                  <td>{orderJewel?.quantity}</td>
+                  <td>
+                    ${orderJewel ? priceJewels(orderJewel.name).toFixed(2) : 0}
+                  </td>
+                  <td>
+                    $
+                    {orderJewel
+                      ? (
+                          (orderJewel.quantity as number) *
+                          priceJewels(orderJewel.name)
+                        ).toFixed(2)
+                      : 0}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -102,4 +134,10 @@ export default function SalesOrderDetails({ params }: { params: { id: string } }
       </div>
     </div>
   );
-} 
+}
+
+const priceJewels = (name: string): number => {
+  const imgSrc: number | undefined = mapPrice[name];
+
+  return imgSrc === undefined ? 0 : imgSrc;
+};

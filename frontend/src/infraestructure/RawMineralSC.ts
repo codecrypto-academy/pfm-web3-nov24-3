@@ -1,4 +1,4 @@
-import { IJewelChainRequest, IJewelChainResponse } from "@/domain/raw-mineral/RawMineral";
+import { IJewelChainRequest, IJewelChainResponse, JewelOrderResponse } from "@/domain/raw-mineral/RawMineral";
 import { IJewelChain } from "./IJewelChain";
 import { BrowserProvider, TransactionReceipt, TransactionResponse } from "ethers";
 import { Contract } from "ethers";
@@ -40,6 +40,29 @@ export class RawMineralSC implements IJewelChain {
       throw Error('Transaction failed');
     }
     return rawMineralTransaction;
+  }
+
+  async getJewelOrder(): Promise<JewelOrderResponse[]> {
+    const contract: Contract = await this.getContractRawMineal();
+    const jewelOrder: JewelOrderResponse[] = await contract.getOrderMaterialList();
+    return jewelOrder;
+  }
+  async getJewelSupplierByIndex(uniqueId: string): Promise<IJewelChainResponse> {
+    const contract: Contract = await this.getContractRawMineal();
+    const jewel: IJewelChainResponse = await contract.getJewelByUniqueId(uniqueId);
+    return jewel;
+  }
+
+  async sendMaterial(uniqueId: string, indexOrder: number): Promise<TransactionReceipt> {
+
+    const contract: Contract = await this.getContractRawMineal();
+    const gasEstimate: bigint = await contract.sendMaterial.estimateGas(uniqueId, indexOrder);
+    const sendJewels: TransactionResponse = await contract.sendMaterial(uniqueId, indexOrder, { gasLimit: gasEstimate });
+    const sendJewelsTransaction: TransactionReceipt | null = await sendJewels.wait();
+    if (sendJewelsTransaction == null) {
+      throw Error('Transaction failed');
+    }
+    return sendJewelsTransaction;
   }
 
   async getContractRawMineal(): Promise<Contract> {

@@ -2,6 +2,7 @@
 
 import { BadgeQuality } from "@/components/badge/BadgeQuality";
 import { CardStore } from "@/components/card/CardStore";
+import { TruncateItem } from "@/components/truncate/TruncateItem";
 import { UserSelect } from "@/components/UserSelect/UserSelect";
 import { useAuth } from "@/context/AuthContext";
 import { RawMineralChain } from "@/domain/raw-mineral/RawMineral";
@@ -32,11 +33,7 @@ export default function Store() {
     return (
       <Fragment>
         <div className="flex flex-row items-center justify-between">
-          <div className="tooltip" data-tip={rawMineral.uniqueId}>
-            <span className="truncate w-48 inline-block">
-              {rawMineral.uniqueId}
-            </span>
-          </div>
+          <TruncateItem item={rawMineral.uniqueId} />
           <span>Cantidad: {rawMineral.quantity}</span>
         </div>
         <div className="flex flex-row items-center justify-between">
