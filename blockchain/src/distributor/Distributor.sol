@@ -8,7 +8,9 @@ import {UserConstant} from "./../user/UserConstant.sol";
 import {IDistributor} from "./IDistributor.sol";
 
 contract Distributor is IDistributor, UserConstant {
-    mapping(bytes32 => Delivery) deliveriesPending;
+    mapping(bytes32 => uint256) private deliveriesPending;
+    Delivery[] private deliveries;
+
     RawMineral private sc_rawMineral;
     UserJewelChain private sc_userJewelChain;
 
@@ -26,6 +28,13 @@ contract Distributor is IDistributor, UserConstant {
         _;
     }
 
+    modifier checkTrackingId(bytes32 trackingId) {
+        if (deliveriesPending[trackingId] == 0) {
+            revert Distributor__TrackingIdNotFound(trackingId);
+        }
+        _;
+    }
+
     constructor(address _rawMineral, address _userJewelChain) {
         sc_rawMineral = RawMineral(_rawMineral);
         sc_userJewelChain = UserJewelChain(_userJewelChain);
@@ -37,14 +46,20 @@ contract Distributor is IDistributor, UserConstant {
      * @param receiver address who send the jewels
      * @param jewelChain array of jewels to deliver
      */
-    function newShipment(address shipper, address receiver, bytes calldata jewelChain)
-        external
-        override
-        checkAddresZero
-    {
+    function newShipment(
+        address shipper,
+        address receiver,
+        bytes calldata jewelChain
+    ) external override checkAddresZero {
         if (
-            !sc_userJewelChain.checkUserRole(shipper, UserConstant.RAW_MINERAL_ROLE)
-                && !sc_userJewelChain.checkUserRole(shipper, UserConstant.JEWEL_FACTORY_ROLE)
+            !sc_userJewelChain.checkUserRole(
+                shipper,
+                UserConstant.RAW_MINERAL_ROLE
+            ) &&
+            !sc_userJewelChain.checkUserRole(
+                shipper,
+                UserConstant.JEWEL_FACTORY_ROLE
+            )
         ) {
             revert Distributor__UserNotAuthorized(shipper);
         }
@@ -61,32 +76,67 @@ contract Distributor is IDistributor, UserConstant {
             deliveryDate: 0,
             jewelChain: jewelChain
         });
-        emit Distributor__Shipment(trackingId, shipper, receiver, delivery.shipperDate, delivery);
+        deliveries.push(delivery);
+        deliveriesPending[trackingId] = deliveries.length;
+        emit Distributor__Shipment(
+            trackingId,
+            shipper,
+            receiver,
+            delivery.shipperDate,
+            delivery
+        );
     }
 
     /**
      * @param trackingId bytes32 of the shipment
      */
-    function confirmDelivery(bytes32 trackingId) external override checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
-        if (deliveriesPending[trackingId].shipper == address(0)) {
-            revert Distributor__TrackingIdNotFound(trackingId);
-        }
+    function confirmDelivery(
+        bytes32 trackingId
+    )
+        external
+        override
+        checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
+        checkTrackingId(trackingId)
+    {
+        uint256 index = deliveriesPending[trackingId];
 
-        Delivery memory delivery = deliveriesPending[trackingId];
+        Delivery memory delivery = deliveries[index];
         delivery.deliveryDate = block.timestamp;
 
         address receiver = delivery.receiver;
 
         sendJewels(delivery.jewelChain, receiver, trackingId);
+        if (deliveries.length != index) {
+            deliveries[index - 1] = deliveries[deliveries.length - 1];
+            bytes32 trackingIdLast = deliveries[deliveries.length - 1]
+                .trackingId;
+            deliveriesPending[trackingIdLast] = index;
+        }
+        deliveries.pop();
 
         delete deliveriesPending[trackingId];
-        emit Distributor__Delivery(trackingId, delivery.receiver, msg.sender, delivery.deliveryDate, delivery);
+        emit Distributor__Delivery(
+            trackingId,
+            delivery.receiver,
+            msg.sender,
+            delivery.deliveryDate,
+            delivery
+        );
     }
 
-    function sendJewels(bytes memory jewelRecord, address receiver, bytes32 trackingId) private {
+    function sendJewels(
+        bytes memory jewelRecord,
+        address receiver,
+        bytes32 trackingId
+    ) private {
         bytes32 _roleUserDelivery = sc_userJewelChain.getRoleUser(receiver);
         if (_roleUserDelivery == UserConstant.RAW_MINERAL_ROLE) {
-            sc_rawMineral.recieveMaterial(msg.sender, receiver, trackingId, jewelRecord);
+            sc_rawMineral.recieveMaterial(
+                msg.sender,
+                receiver,
+                trackingId,
+                jewelRecord
+            );
         } else if (_roleUserDelivery == UserConstant.JEWEL_FACTORY_ROLE) {
             revert("Method not implemented");
         } else if (_roleUserDelivery == UserConstant.STORE_ROLE) {
@@ -94,5 +144,29 @@ contract Distributor is IDistributor, UserConstant {
         } else {
             revert Distributor__ReceiverNotFound(receiver, _roleUserDelivery);
         }
+    }
+
+    function getShipmentByTrackingId(
+        bytes32 trackingId
+    )
+        external
+        view
+        override
+        checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
+        checkTrackingId(trackingId)
+        returns (Delivery memory)
+    {
+        uint256 index = deliveriesPending[trackingId];
+        return deliveries[index - 1];
+    }
+
+    function getShipments()
+        external
+        view
+        override
+        checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
+        returns (Delivery[] memory)
+    {
+        return deliveries;
     }
 }
