@@ -3,15 +3,7 @@ import { defaultAbiCoderEncode, defaultAbiCoderDecode, encodeBytes32String, deco
 import { BrowserProvider, TransactionReceipt } from "ethers";
 import { IJewelChain } from "@/infraestructure/IJewelChain";
 import { RawMineralSC } from "@/infraestructure/RawMineralSC";
-
-const mapImg: Record<string, string> = {
-  Diamante: '/images/diamante.webp',
-  Oro: '/images/oro.webp',
-  Plata: '/images/plata.webp',
-  Zafiro: '/images/zafiro.webp',
-  Rubi: '/images/rubi.webp'
-}
-
+import { selectImgByName } from "@/utils/imagesUtils";
 
 export class RawMineralService {
   private rawMineralSC: IJewelChain;
@@ -50,7 +42,7 @@ export class RawMineralService {
         origin: origin as string,
         recordType: RecordType.MATERIAL,
         data: mineral.data,
-        img: this.selectImgByName(name)
+        img: selectImgByName(name)
       }
     });
 
@@ -108,19 +100,9 @@ export class RawMineralService {
       origin: origin as string,
       recordType: RecordType.MATERIAL,
       data: mineral.data,
-      img: this.selectImgByName(name),
+      img: selectImgByName(name),
     };
     return parsedMineral;
   }
-
-
-  private selectImgByName(name: string): string {
-    const imgSrc: string | undefined = mapImg[name];
-
-    return imgSrc === undefined ? '/images/default-jewel.webp' : imgSrc;
-  }
-
-
-
 
 }

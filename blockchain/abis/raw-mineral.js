@@ -71,6 +71,75 @@ export const RAW_MINERAL_ABI = [
     },
     {
         type: "function",
+        name: "decodeJewel",
+        inputs: [
+            {
+                name: "encodedData",
+                type: "bytes",
+                internalType: "bytes",
+            },
+        ],
+        outputs: [
+            {
+                name: "",
+                type: "tuple",
+                internalType: "struct IJewelChain.JewelRecord",
+                components: [
+                    {
+                        name: "supplier",
+                        type: "address",
+                        internalType: "address",
+                    },
+                    {
+                        name: "uniqueId",
+                        type: "bytes32",
+                        internalType: "bytes32",
+                    },
+                    {
+                        name: "name",
+                        type: "bytes32",
+                        internalType: "bytes32",
+                    },
+                    {
+                        name: "date",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "quantity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "recordType",
+                        type: "uint8",
+                        internalType: "enum IJewelChain.RecordType",
+                    },
+                    {
+                        name: "data",
+                        type: "bytes",
+                        internalType: "bytes",
+                    },
+                ],
+            },
+        ],
+        stateMutability: "pure",
+    },
+    {
+        type: "function",
+        name: "encodeJewel",
+        inputs: [
+            {
+                name: "uniqueId",
+                type: "bytes32",
+                internalType: "bytes32",
+            },
+        ],
+        outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
+        stateMutability: "view",
+    },
+    {
+        type: "function",
         name: "getJewelByUniqueId",
         inputs: [
             {

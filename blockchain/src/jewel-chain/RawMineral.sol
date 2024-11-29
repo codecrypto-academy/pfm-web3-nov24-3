@@ -33,7 +33,12 @@ contract RawMineral is IJewelChain, UserConstant {
     }
 
     modifier isSupplierRawMineral(address supplier) {
-        if (!sc_userJewelChain.checkUserRole(supplier, UserConstant.RAW_MINERAL_ROLE)) {
+        if (
+            !sc_userJewelChain.checkUserRole(
+                supplier,
+                UserConstant.RAW_MINERAL_ROLE
+            )
+        ) {
             revert RawMineral__SupplierIsNotRawMineral(supplier);
         }
         _;
@@ -51,13 +56,20 @@ contract RawMineral is IJewelChain, UserConstant {
         sc_userJewelChain = UserJewelChain(_sc_userJewelChain);
     }
 
-    function createJewelRecord(bytes32 name, uint256 date, uint256 quantity, bytes calldata data)
+    function createJewelRecord(
+        bytes32 name,
+        uint256 date,
+        uint256 quantity,
+        bytes calldata data
+    )
         external
         override
         checkAddresZero
         checkRoleUser(UserConstant.RAW_MINERAL_ROLE)
     {
-        bytes32 uniqueId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
+        bytes32 uniqueId = keccak256(
+            abi.encodePacked(msg.sender, block.timestamp)
+        );
         JewelRecord memory jewelRecord = JewelRecord({
             supplier: msg.sender,
             uniqueId: uniqueId,
@@ -72,31 +84,53 @@ contract RawMineral is IJewelChain, UserConstant {
         jewelArray.push(jewelRecord);
         _rawJewelMap[uniqueId] = jewelArray.length;
 
-        emit JewelChain__Created(msg.sender, uniqueId, name, date, quantity, data, RecordType.MATERIAL);
+        emit JewelChain__Created(
+            msg.sender,
+            uniqueId,
+            name,
+            date,
+            quantity,
+            data,
+            RecordType.MATERIAL
+        );
     }
 
-    function getJewelRecordBySupplier(address supplier) external view override returns (JewelRecord[] memory) {
+    function getJewelRecordBySupplier(
+        address supplier
+    ) external view override returns (JewelRecord[] memory) {
         // comprobar que solo pueden acceder roles RAW_MINERAL y JEWEL_FACTORY
         if (
-            !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.RAW_MINERAL_ROLE)
-                && !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)
+            !sc_userJewelChain.checkUserRole(
+                msg.sender,
+                UserConstant.RAW_MINERAL_ROLE
+            ) &&
+            !sc_userJewelChain.checkUserRole(
+                msg.sender,
+                UserConstant.JEWEL_FACTORY_ROLE
+            )
         ) {
             revert RawMineral__UserNotAuthorized(msg.sender);
         }
 
         // comprobar que el proveedor es de rol RAW_MINERAL
-        if (!sc_userJewelChain.checkUserRole(supplier, UserConstant.RAW_MINERAL_ROLE)) {
+        if (
+            !sc_userJewelChain.checkUserRole(
+                supplier,
+                UserConstant.RAW_MINERAL_ROLE
+            )
+        ) {
             revert RawMineral__SupplierIsNotRawMineral(supplier);
         }
 
         return _raw[supplier];
     }
 
-    function recieveMaterial(address distributor, address supplier, bytes32 trackingId, bytes calldata jewels)
-        external
-        override
-        isSupplierRawMineral(supplier)
-    {
+    function recieveMaterial(
+        address distributor,
+        address supplier,
+        bytes32 trackingId,
+        bytes calldata jewels
+    ) external override isSupplierRawMineral(supplier) {
         JewelRecord memory jewelRecord = abi.decode(jewels, (JewelRecord));
 
         _raw[supplier].push(jewelRecord);
@@ -104,14 +138,22 @@ contract RawMineral is IJewelChain, UserConstant {
         emit JewelChain_Recieve(supplier, distributor, trackingId, jewelRecord);
     }
 
-    function orderMaterial(address supplier, bytes32 uniqueId)
+    function orderMaterial(
+        address supplier,
+        bytes32 uniqueId
+    )
         external
         override
         isSupplierRawMineral(supplier)
         existRawMineral(uniqueId)
     {
         // comprobar que solo pueden acceder roles JEWEL_FACTORY
-        if (!sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)) {
+        if (
+            !sc_userJewelChain.checkUserRole(
+                msg.sender,
+                UserConstant.JEWEL_FACTORY_ROLE
+            )
+        ) {
             revert RawMineral__UserNotAuthorized(msg.sender);
         }
 
@@ -126,8 +168,11 @@ contract RawMineral is IJewelChain, UserConstant {
             }
         }
 
-        JewelToSend memory jeweToSend =
-            JewelToSend({to: msg.sender, uniqueId: uniqueId, index: _orders[supplier].length + 1});
+        JewelToSend memory jeweToSend = JewelToSend({
+            to: msg.sender,
+            uniqueId: uniqueId,
+            index: _orders[supplier].length + 1
+        });
 
         _orders[supplier].push(jeweToSend);
         emit JewelChain_NewOrder(supplier, msg.sender, uniqueId);
@@ -143,7 +188,10 @@ contract RawMineral is IJewelChain, UserConstant {
         return _orders[msg.sender];
     }
 
-    function sendMaterial(bytes32 uniqueId, uint256 indexOrder)
+    function sendMaterial(
+        bytes32 uniqueId,
+        uint256 indexOrder
+    )
         external
         override
         isSupplierRawMineral(msg.sender)
@@ -164,7 +212,9 @@ contract RawMineral is IJewelChain, UserConstant {
         JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
         // quitamos de los pedidos
         if (_orders[msg.sender].length == indexOrder) {
-            _orders[msg.sender][indexOrder - 1] = _orders[msg.sender][_orders[msg.sender].length - 1];
+            _orders[msg.sender][indexOrder - 1] = _orders[msg.sender][
+                _orders[msg.sender].length - 1
+            ];
         }
         _orders[msg.sender].pop();
 
@@ -173,11 +223,15 @@ contract RawMineral is IJewelChain, UserConstant {
         emit JewelChain__SendNewOrder(msg.sender, jewelToSend.to, uniqueId);
     }
 
-    function setDistributorSC(address _sc_Distributor) external checkRoleUser(UserConstant.ADMIN_ROLE) {
+    function setDistributorSC(
+        address _sc_Distributor
+    ) external checkRoleUser(UserConstant.ADMIN_ROLE) {
         sc_distributor = Distributor(_sc_Distributor);
     }
 
-    function getJewelByUniqueId(bytes32 uniqueId)
+    function getJewelByUniqueId(
+        bytes32 uniqueId
+    )
         external
         view
         override
@@ -187,5 +241,21 @@ contract RawMineral is IJewelChain, UserConstant {
     {
         uint256 index = _rawJewelMap[uniqueId];
         return jewelArray[index - 1];
+    }
+
+    function encodeJewel(
+        bytes32 uniqueId
+    ) external view returns (bytes memory) {
+        uint256 index = _rawJewelMap[uniqueId];
+
+        JewelRecord memory jewelRecord = jewelArray[index - 1];
+        bytes memory jewelBytes = abi.encode(jewelRecord);
+        return jewelBytes;
+    }
+
+    function decodeJewel(
+        bytes calldata encodedData
+    ) external pure returns (JewelRecord memory) {
+        return abi.decode(encodedData, (JewelRecord));
     }
 }

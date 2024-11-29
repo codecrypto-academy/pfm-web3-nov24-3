@@ -25,6 +25,7 @@ type RoutePermissions = {
 };
 
 const ROUTE_PERMISSIONS: RoutePermissions = {
+  "/dashboard/shipment": ["DISTRIBUTOR_ROLE"],
   "/dashboard/users": ["ADMIN_ROLE"],
   "/dashboard/raw-material": ["RAW_MINERAL_ROLE"],
   "/dashboard/store": ["JEWEL_FACTORY_ROLE", "STORE_ROLE"],
@@ -143,6 +144,14 @@ export default function DashboardLayout({
             <li>
               <Link href="/dashboard/purchase-orders">
                 <FaShoppingCart className="w-4 h-4" /> Ordenes de compra
+              </Link>
+            </li>
+          )}
+
+          {hasRouteAccess("/dashboard/shipment") && (
+            <li>
+              <Link href="/dashboard/shipment">
+                <FaShoppingCart className="w-4 h-4" /> Pedidos
               </Link>
             </li>
           )}
