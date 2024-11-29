@@ -46,20 +46,14 @@ contract Distributor is IDistributor, UserConstant {
      * @param receiver address who send the jewels
      * @param jewelChain array of jewels to deliver
      */
-    function newShipment(
-        address shipper,
-        address receiver,
-        bytes calldata jewelChain
-    ) external override checkAddresZero {
+    function newShipment(address shipper, address receiver, bytes calldata jewelChain)
+        external
+        override
+        checkAddresZero
+    {
         if (
-            !sc_userJewelChain.checkUserRole(
-                shipper,
-                UserConstant.RAW_MINERAL_ROLE
-            ) &&
-            !sc_userJewelChain.checkUserRole(
-                shipper,
-                UserConstant.JEWEL_FACTORY_ROLE
-            )
+            !sc_userJewelChain.checkUserRole(shipper, UserConstant.RAW_MINERAL_ROLE)
+                && !sc_userJewelChain.checkUserRole(shipper, UserConstant.JEWEL_FACTORY_ROLE)
         ) {
             revert Distributor__UserNotAuthorized(shipper);
         }
@@ -78,21 +72,13 @@ contract Distributor is IDistributor, UserConstant {
         });
         deliveries.push(delivery);
         deliveriesPending[trackingId] = deliveries.length;
-        emit Distributor__Shipment(
-            trackingId,
-            shipper,
-            receiver,
-            delivery.shipperDate,
-            delivery
-        );
+        emit Distributor__Shipment(trackingId, shipper, receiver, delivery.shipperDate, delivery);
     }
 
     /**
      * @param trackingId bytes32 of the shipment
      */
-    function confirmDelivery(
-        bytes32 trackingId
-    )
+    function confirmDelivery(bytes32 trackingId)
         external
         override
         checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
@@ -108,35 +94,19 @@ contract Distributor is IDistributor, UserConstant {
         sendJewels(delivery.jewelChain, receiver, trackingId);
         if (deliveries.length != index) {
             deliveries[index - 1] = deliveries[deliveries.length - 1];
-            bytes32 trackingIdLast = deliveries[deliveries.length - 1]
-                .trackingId;
+            bytes32 trackingIdLast = deliveries[deliveries.length - 1].trackingId;
             deliveriesPending[trackingIdLast] = index;
         }
         deliveries.pop();
 
         delete deliveriesPending[trackingId];
-        emit Distributor__Delivery(
-            trackingId,
-            delivery.receiver,
-            msg.sender,
-            delivery.deliveryDate,
-            delivery
-        );
+        emit Distributor__Delivery(trackingId, delivery.receiver, msg.sender, delivery.deliveryDate, delivery);
     }
 
-    function sendJewels(
-        bytes memory jewelRecord,
-        address receiver,
-        bytes32 trackingId
-    ) private {
+    function sendJewels(bytes memory jewelRecord, address receiver, bytes32 trackingId) private {
         bytes32 _roleUserDelivery = sc_userJewelChain.getRoleUser(receiver);
         if (_roleUserDelivery == UserConstant.RAW_MINERAL_ROLE) {
-            sc_rawMineral.recieveMaterial(
-                msg.sender,
-                receiver,
-                trackingId,
-                jewelRecord
-            );
+            sc_rawMineral.recieveMaterial(msg.sender, receiver, trackingId, jewelRecord);
         } else if (_roleUserDelivery == UserConstant.JEWEL_FACTORY_ROLE) {
             revert("Method not implemented");
         } else if (_roleUserDelivery == UserConstant.STORE_ROLE) {
@@ -146,9 +116,7 @@ contract Distributor is IDistributor, UserConstant {
         }
     }
 
-    function getShipmentByTrackingId(
-        bytes32 trackingId
-    )
+    function getShipmentByTrackingId(bytes32 trackingId)
         external
         view
         override
