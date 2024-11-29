@@ -33,7 +33,6 @@ export default function NewUser() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Crear usuario:", formData);
     await createUser(formData);
     router.push("/dashboard/users");
   };

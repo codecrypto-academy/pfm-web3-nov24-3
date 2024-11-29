@@ -27,3 +27,11 @@ export interface IJewelChainResponse extends IJewelChainRequest {
 export interface RawMineralChain extends IJewelChainBase, RawMineralForm, IJewelChainResponse {
   img: string
 }
+
+export interface JewelOrderResponse {
+  to: string;
+  uniqueId: string;
+  index: number;
+}
+
+export interface JewelOrder extends JewelOrderResponse, RawMineralChain { }

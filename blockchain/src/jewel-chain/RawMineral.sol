@@ -143,7 +143,7 @@ contract RawMineral is IJewelChain, UserConstant {
         return _orders[msg.sender];
     }
 
-    function sendMaterial(address to, bytes32 uniqueId, uint256 indexOrder)
+    function sendMaterial(bytes32 uniqueId, uint256 indexOrder)
         external
         override
         isSupplierRawMineral(msg.sender)
@@ -152,8 +152,10 @@ contract RawMineral is IJewelChain, UserConstant {
         uint256 index = _rawJewelMap[uniqueId];
         JewelRecord memory jewelRecord = jewelArray[index - 1];
         // quitamos el elemtno del array
-        if (jewelArray.length == index) {
+        if (jewelArray.length != index) {
             jewelArray[index - 1] = jewelArray[jewelArray.length - 1];
+            bytes32 uniqueIdLast = jewelArray[jewelArray.length - 1].uniqueId;
+            _rawJewelMap[uniqueIdLast] = index;
         }
         jewelArray.pop();
 
@@ -161,10 +163,10 @@ contract RawMineral is IJewelChain, UserConstant {
 
         JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
         // quitamos de los pedidos
-        if (_orders[to].length == indexOrder) {
-            _orders[to][indexOrder - 1] = _orders[to][_orders[to].length - 1];
+        if (_orders[msg.sender].length == indexOrder) {
+            _orders[msg.sender][indexOrder - 1] = _orders[msg.sender][_orders[msg.sender].length - 1];
         }
-        _orders[to].pop();
+        _orders[msg.sender].pop();
 
         sc_distributor.newShipment(msg.sender, jewelToSend.to, jewelBytes);
 
@@ -173,5 +175,17 @@ contract RawMineral is IJewelChain, UserConstant {
 
     function setDistributorSC(address _sc_Distributor) external checkRoleUser(UserConstant.ADMIN_ROLE) {
         sc_distributor = Distributor(_sc_Distributor);
+    }
+
+    function getJewelByUniqueId(bytes32 uniqueId)
+        external
+        view
+        override
+        isSupplierRawMineral(msg.sender)
+        existRawMineral(uniqueId)
+        returns (JewelRecord memory)
+    {
+        uint256 index = _rawJewelMap[uniqueId];
+        return jewelArray[index - 1];
     }
 }

@@ -2,16 +2,31 @@
 
 import { useAuthorization } from "@/hooks/useAuthorization";
 import { SalesOrderTable } from "@/components/SalesOrder/SalesOrderTable";
-import { FaPlus } from "react-icons/fa";
-import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import { useRawMineralOrders } from "@/hooks/raw-mineral/useRawMineralOrders";
+import { useEffect, useState } from "react";
 
 export default function SalesOrders() {
+  const { provider } = useAuth();
+  const { orders, getOrderPending } = useRawMineralOrders(provider);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const getOrders = async () => {
+      await getOrderPending();
+      setIsLoading(false);
+    };
+    setIsLoading(true);
+    getOrders();
+  }, [getOrderPending]);
+
   const isAuthorized = useAuthorization([
     "ADMIN_ROLE",
     "RAW_MINERAL_ROLE",
     "JEWEL_FACTORY_ROLE",
     "DISTRIBUTOR_ROLE",
-    "STORE_ROLE"
+    "STORE_ROLE",
   ]);
 
   if (!isAuthorized) {
@@ -22,15 +37,14 @@ export default function SalesOrders() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Órdenes de Venta</h1>
-        <Link 
-          href="/dashboard/sales-orders/new" 
-          className="btn btn-primary"
-        >
-          <FaPlus className="w-4 h-4 mr-2" />
-          Crear Nueva Orden
-        </Link>
       </div>
-      <SalesOrderTable />
+      {isLoading ? (
+        <div className="flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      ) : (
+        <SalesOrderTable orders={orders} />
+      )}
     </div>
   );
-} 
+}

@@ -94,5 +94,7 @@ interface IJewelChain {
      */
     function getOrderMaterialList() external view returns (JewelToSend[] memory);
 
-    function sendMaterial(address to, bytes32 uniqueId, uint256 indexOrder) external;
+    function sendMaterial(bytes32 uniqueId, uint256 indexOrder) external;
+
+    function getJewelByUniqueId(bytes32 uniqueId) external returns (JewelRecord memory);
 }

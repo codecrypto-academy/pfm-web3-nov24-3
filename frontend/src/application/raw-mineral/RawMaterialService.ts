@@ -1,4 +1,4 @@
-import { IJewelChainRequest, IJewelChainResponse, RawMineralChain, RawMineralForm, RecordType } from "@/domain/raw-mineral/RawMineral";
+import { IJewelChainRequest, IJewelChainResponse, JewelOrder, JewelOrderResponse, RawMineralChain, RawMineralForm, RecordType } from "@/domain/raw-mineral/RawMineral";
 import { defaultAbiCoderEncode, defaultAbiCoderDecode, encodeBytes32String, decodeBytes32String, weiToUnit, unitToWei } from "../EthersUtils";
 import { BrowserProvider, TransactionReceipt } from "ethers";
 import { IJewelChain } from "@/infraestructure/IJewelChain";
@@ -62,11 +62,65 @@ export class RawMineralService {
     return tx.hash;
   }
 
+  public async getOrderPending(): Promise<JewelOrder[]> {
+
+    const jewelOrderResponses: JewelOrderResponse[] = await this.rawMineralSC.getJewelOrder();
+
+    const results = await Promise.allSettled(
+      jewelOrderResponses.map(async (jewelOrderResponse) => {
+        const mineral = await this.rawMineralSC.getJewelSupplierByIndex(jewelOrderResponse.uniqueId);
+
+        const parsedMineral: RawMineralChain = this.parseJewelRaw(mineral);
+        const jewelOrderResponseC: JewelOrderResponse = {
+          to: jewelOrderResponse.to,
+          uniqueId: jewelOrderResponse.uniqueId,
+          index: Number(unitToWei(Number(jewelOrderResponse.index)))
+        };
+        return {
+          ...jewelOrderResponseC,
+          ...parsedMineral,
+        };
+      })
+    );
+    const successfulOrders: JewelOrder[] = results
+      .filter((result): result is PromiseFulfilledResult<JewelOrder> => result.status === 'fulfilled')
+      .map((result) => result.value);
+
+    return successfulOrders;
+  }
+
+  public async sendMaterial(uniqueId: string, indexOrder: number): Promise<string> {
+    const tx: TransactionReceipt = await this.rawMineralSC.sendMaterial(uniqueId, indexOrder);
+    return tx.hash;
+  }
+
+  private parseJewelRaw(mineral: IJewelChainResponse): RawMineralChain {
+    const [quality, origin] = defaultAbiCoderDecode(['uint256', 'string'], mineral.data);
+    const name: string = decodeBytes32String(mineral.name);
+
+    const parsedMineral: RawMineralChain = {
+      supplier: mineral.supplier,
+      uniqueId: mineral.uniqueId,
+      name,
+      date: unitToWei(Number(mineral.date)),
+      quantity: unitToWei(Number(mineral.quantity)),
+      quality: Number(unitToWei(Number(quality))),
+      origin: origin as string,
+      recordType: RecordType.MATERIAL,
+      data: mineral.data,
+      img: this.selectImgByName(name),
+    };
+    return parsedMineral;
+  }
+
+
   private selectImgByName(name: string): string {
     const imgSrc: string | undefined = mapImg[name];
 
     return imgSrc === undefined ? '/images/default-jewel.webp' : imgSrc;
   }
+
+
 
 
 }
