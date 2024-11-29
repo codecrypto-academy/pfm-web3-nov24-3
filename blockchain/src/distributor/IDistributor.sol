@@ -30,4 +30,7 @@ interface IDistributor {
     function newShipment(address shipper, address receiver, bytes calldata jewelChain) external;
 
     function confirmDelivery(bytes32 trackingId) external;
+
+    function getShipmentByTrackingId(bytes32 trackingId) external view returns (Delivery memory);
+    function getShipments() external view returns (Delivery[] memory);
 }

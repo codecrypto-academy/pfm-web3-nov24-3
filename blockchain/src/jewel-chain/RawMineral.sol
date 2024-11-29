@@ -188,4 +188,16 @@ contract RawMineral is IJewelChain, UserConstant {
         uint256 index = _rawJewelMap[uniqueId];
         return jewelArray[index - 1];
     }
+
+    function encodeJewel(bytes32 uniqueId) external view returns (bytes memory) {
+        uint256 index = _rawJewelMap[uniqueId];
+
+        JewelRecord memory jewelRecord = jewelArray[index - 1];
+        bytes memory jewelBytes = abi.encode(jewelRecord);
+        return jewelBytes;
+    }
+
+    function decodeJewel(bytes calldata encodedData) external pure returns (JewelRecord memory) {
+        return abi.decode(encodedData, (JewelRecord));
+    }
 }

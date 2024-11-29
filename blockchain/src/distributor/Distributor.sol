@@ -8,7 +8,9 @@ import {UserConstant} from "./../user/UserConstant.sol";
 import {IDistributor} from "./IDistributor.sol";
 
 contract Distributor is IDistributor, UserConstant {
-    mapping(bytes32 => Delivery) deliveriesPending;
+    mapping(bytes32 => uint256) private deliveriesPending;
+    Delivery[] private deliveries;
+
     RawMineral private sc_rawMineral;
     UserJewelChain private sc_userJewelChain;
 
@@ -22,6 +24,13 @@ contract Distributor is IDistributor, UserConstant {
     modifier checkAddresZero() {
         if (msg.sender == address(0)) {
             revert Distributor__UserInvalidAddress(msg.sender);
+        }
+        _;
+    }
+
+    modifier checkTrackingId(bytes32 trackingId) {
+        if (deliveriesPending[trackingId] == 0) {
+            revert Distributor__TrackingIdNotFound(trackingId);
         }
         _;
     }
@@ -61,23 +70,34 @@ contract Distributor is IDistributor, UserConstant {
             deliveryDate: 0,
             jewelChain: jewelChain
         });
+        deliveries.push(delivery);
+        deliveriesPending[trackingId] = deliveries.length;
         emit Distributor__Shipment(trackingId, shipper, receiver, delivery.shipperDate, delivery);
     }
 
     /**
      * @param trackingId bytes32 of the shipment
      */
-    function confirmDelivery(bytes32 trackingId) external override checkRoleUser(UserConstant.DISTRIBUTOR_ROLE) {
-        if (deliveriesPending[trackingId].shipper == address(0)) {
-            revert Distributor__TrackingIdNotFound(trackingId);
-        }
+    function confirmDelivery(bytes32 trackingId)
+        external
+        override
+        checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
+        checkTrackingId(trackingId)
+    {
+        uint256 index = deliveriesPending[trackingId];
 
-        Delivery memory delivery = deliveriesPending[trackingId];
+        Delivery memory delivery = deliveries[index];
         delivery.deliveryDate = block.timestamp;
 
         address receiver = delivery.receiver;
 
         sendJewels(delivery.jewelChain, receiver, trackingId);
+        if (deliveries.length != index) {
+            deliveries[index - 1] = deliveries[deliveries.length - 1];
+            bytes32 trackingIdLast = deliveries[deliveries.length - 1].trackingId;
+            deliveriesPending[trackingIdLast] = index;
+        }
+        deliveries.pop();
 
         delete deliveriesPending[trackingId];
         emit Distributor__Delivery(trackingId, delivery.receiver, msg.sender, delivery.deliveryDate, delivery);
@@ -94,5 +114,27 @@ contract Distributor is IDistributor, UserConstant {
         } else {
             revert Distributor__ReceiverNotFound(receiver, _roleUserDelivery);
         }
+    }
+
+    function getShipmentByTrackingId(bytes32 trackingId)
+        external
+        view
+        override
+        checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
+        checkTrackingId(trackingId)
+        returns (Delivery memory)
+    {
+        uint256 index = deliveriesPending[trackingId];
+        return deliveries[index - 1];
+    }
+
+    function getShipments()
+        external
+        view
+        override
+        checkRoleUser(UserConstant.DISTRIBUTOR_ROLE)
+        returns (Delivery[] memory)
+    {
+        return deliveries;
     }
 }

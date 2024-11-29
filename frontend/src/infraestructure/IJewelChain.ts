@@ -7,5 +7,6 @@ export interface IJewelChain {
   orderMaterial(provider: string, uniqueId: string): Promise<TransactionReceipt>;
   getJewelOrder(): Promise<JewelOrderResponse[]>;
   getJewelSupplierByIndex(uniqueId: string): Promise<IJewelChainResponse>;
-  sendMaterial(uniqueId: string, indexOrder: number): Promise<TransactionReceipt>
+  sendMaterial(uniqueId: string, indexOrder: number): Promise<TransactionReceipt>;
+  getJewelChainByBytes(jewelData: string): Promise<IJewelChainResponse>;
 }

@@ -65,6 +65,12 @@ export class RawMineralSC implements IJewelChain {
     return sendJewelsTransaction;
   }
 
+  async getJewelChainByBytes(jewelData: string): Promise<IJewelChainResponse> {
+    const contract: Contract = await this.getContractRawMineal();
+    const jewelRecord: IJewelChainResponse = await contract.decodeJewel(jewelData);
+    return jewelRecord;
+  }
+
   async getContractRawMineal(): Promise<Contract> {
     const signer = await this.provider.getSigner();
     const ADDRESS = process.env.NEXT_PUBLIC_RAW_MINERAL_CONTRACT_ADDRESS as string;
