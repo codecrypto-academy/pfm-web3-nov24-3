@@ -7,10 +7,7 @@ import { BrowserProvider } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 
 let rawMineralService: RawMineralService;
-export const useRawMineralService = (
-  provider: BrowserProvider | null,
-  address: string | undefined
-) => {
+export const useRawMineralService = (provider: BrowserProvider | null) => {
   const [rawMineralList, setRawMineralList] = useState<RawMineralChain[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +18,7 @@ export const useRawMineralService = (
     }
   }, [provider]);
 
-  const getAllRawMineral = useCallback(async () => {
+  const getAllRawMineral = useCallback(async (address: string) => {
     if (!address || !rawMineralService) return;
 
     try {
@@ -36,7 +33,7 @@ export const useRawMineralService = (
     } finally {
       setIsLoading(false);
     }
-  }, [address]);
+  }, []);
 
   const createRawMineral = useCallback(async (mineralData: RawMineralForm) => {
     if (!rawMineralService) return;

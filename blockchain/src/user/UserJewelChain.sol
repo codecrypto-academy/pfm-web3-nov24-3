@@ -156,6 +156,31 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         return _getUser(_userAddress).role;
     }
 
+    function getUsersByRole(bytes32 role) external view checkIfUserExist(msg.sender) returns (User[] memory) {
+        // NOTA: por simplicidad se realiza el filtro del role desde aqui. INEFICIENTE - Y posibilidad de bug por quedarse sin gas - Mejor desde offchain
+        uint256 count = 0;
+
+        // Contar los usuarios que tienen el rol y están activos
+        for (uint256 i = 0; i < _usersArray.length; i++) {
+            if (_usersArray[i].role == role && _usersArray[i].isActive) {
+                count++;
+            }
+        }
+
+        // Crear un nuevo array para los usuarios filtrados
+        User[] memory filteredUsers = new User[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < _usersArray.length; i++) {
+            if (_usersArray[i].role == role && _usersArray[i].isActive) {
+                filteredUsers[index] = _usersArray[i];
+                index++;
+            }
+        }
+
+        return filteredUsers;
+    }
+
     /**
      * Private functions
      */

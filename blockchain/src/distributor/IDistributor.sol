@@ -27,7 +27,7 @@ interface IDistributor {
         Delivery delivery
     );
 
-    function newShipment(address receiver, bytes calldata jewelChain) external;
+    function newShipment(address shipper, address receiver, bytes calldata jewelChain) external;
 
     function confirmDelivery(bytes32 trackingId) external;
 }

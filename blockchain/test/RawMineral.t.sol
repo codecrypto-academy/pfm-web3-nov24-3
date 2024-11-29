@@ -81,7 +81,7 @@ contract RawMineralTest is Test, UserConstant {
         vm.stopPrank();
     }
 
-    function test_GetRawMineralFromUserAllowed() public {
+    function test_GetRawMineralFromUserIsNotRawMineral() public {
         vm.startPrank(rawMineralAddress);
         vm.expectRevert(abi.encodeWithSelector(IJewelChain.RawMineral__SupplierIsNotRawMineral.selector, owner));
         rawMineral.getJewelRecordBySupplier(owner);

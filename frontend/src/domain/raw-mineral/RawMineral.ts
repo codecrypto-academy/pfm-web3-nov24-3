@@ -24,4 +24,6 @@ export interface IJewelChainResponse extends IJewelChainRequest {
   recordType: RecordType;
 }
 
-export interface RawMineralChain extends IJewelChainBase, RawMineralForm, IJewelChainResponse { }
+export interface RawMineralChain extends IJewelChainBase, RawMineralForm, IJewelChainResponse {
+  img: string
+}

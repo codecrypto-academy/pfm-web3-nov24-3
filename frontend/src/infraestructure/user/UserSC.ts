@@ -2,6 +2,7 @@ import { UserSCList, UserSmartContract } from "@/types/user";
 import { IUser } from "./IUser";
 import { BrowserProvider, Contract, TransactionReceipt, TransactionResponse } from "ethers";
 import { ABI_USER } from "@/abis/user";
+import { convertRoleToBytes32 } from "@/application/EthersUtils";
 
 export class UserSC implements IUser {
 
@@ -10,7 +11,6 @@ export class UserSC implements IUser {
   constructor(provider: BrowserProvider) {
     this.provider = provider;
   }
-
 
   async getUsersList(): Promise<UserSCList[]> {
     const contract: Contract = await this.getContractUser();
@@ -46,11 +46,12 @@ export class UserSC implements IUser {
     return userDeleteTransation;
   }
 
-  /*async getUsersList(): Promise<UserSC[]> {
+  async getUsersByRole(role: string): Promise<UserSCList[]> {
     const contract: Contract = await this.getContractUser();
-    const usersList: UserSC[] = await contract.getListUsers();
+    const roleSC: string = convertRoleToBytes32(role);
+    const usersList: UserSCList[] = await contract.getUsersByRole(roleSC);
     return usersList;
-  }*/
+  }
 
   async getContractUser(): Promise<Contract> {
     const signer = await this.provider.getSigner();

@@ -66,7 +66,7 @@ contract DistributorTest is Test, UserConstant {
         );
 
         // Llamar a la función del contrato
-        sc_distributor.newShipment(jewelFactoryAddress, jewelChain);
+        sc_distributor.newShipment(rawMineralAddress, jewelFactoryAddress, jewelChain);
 
         vm.stopPrank(); // Finalizar la simulación del sender
     }

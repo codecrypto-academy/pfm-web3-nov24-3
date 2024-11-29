@@ -51,11 +51,26 @@ export const useUserService = (provider: BrowserProvider | null) => {
     }
   }, []);
 
+  const listUserByRole = useCallback(async (role: string) => {
+    if (!userService) return;
+
+    try {
+      setIsLoading(true);
+      const usersList: User[] = await userService.listUserByRole(role);
+      setUserList(usersList);
+    } catch (error) {
+      console.error("Error listUserByRole", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     userList,
     createUser,
     deleteUser,
     listUsers,
+    listUserByRole,
   };
 };

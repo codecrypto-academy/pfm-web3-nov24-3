@@ -31,6 +31,17 @@ export class RawMineralSC implements IJewelChain {
     return rawMineral;
   }
 
+  async orderMaterial(provider: string, uniqueId: string): Promise<TransactionReceipt> {
+    const contract: Contract = await this.getContractRawMineal();
+    const gasEstimate: bigint = await contract.orderMaterial.estimateGas(provider, uniqueId);
+    const rawMineralOrder: TransactionResponse = await contract.orderMaterial(provider, uniqueId, { gasLimite: gasEstimate });
+    const rawMineralTransaction: TransactionReceipt | null = await rawMineralOrder.wait();
+    if (rawMineralTransaction == null) {
+      throw Error('Transaction failed');
+    }
+    return rawMineralTransaction;
+  }
+
   async getContractRawMineal(): Promise<Contract> {
     const signer = await this.provider.getSigner();
     const ADDRESS = process.env.NEXT_PUBLIC_RAW_MINERAL_CONTRACT_ADDRESS as string;

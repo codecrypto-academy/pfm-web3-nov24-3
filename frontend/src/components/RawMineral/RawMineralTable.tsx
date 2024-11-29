@@ -4,6 +4,7 @@ import { RawMineralChain } from "@/domain/raw-mineral/RawMineral";
 import { formatDate } from "@/utils/dateUtils";
 import Link from "next/link";
 import { FaEye, FaEdit } from "react-icons/fa";
+import { BadgeQuality } from "../badge/BadgeQuality";
 
 interface RawMineralTableProps {
   rawMineralList: RawMineralChain[];
@@ -32,9 +33,7 @@ export const RawMineralTable = ({ rawMineralList }: RawMineralTableProps) => {
               <td>{formatDate(new Date(Number(mineral.date)))}</td>
               <td>{mineral.quantity}</td>
               <td>
-                <span className={`badge ${getQualityBadgeColor(mineral.quality)}`}>
-                  {mineral.quality}%
-                </span>
+                <BadgeQuality quality={mineral.quality} />
               </td>
               <td>{mineral.origin}</td>
               <td className="space-x-2">
@@ -58,10 +57,3 @@ export const RawMineralTable = ({ rawMineralList }: RawMineralTableProps) => {
     </div>
   );
 };
-
-function getQualityBadgeColor(quality: number): string {
-  if (quality >= 90) return "badge-success";
-  if (quality >= 70) return "badge-info";
-  if (quality >= 50) return "badge-warning";
-  return "badge-error";
-}

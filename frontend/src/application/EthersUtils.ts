@@ -23,3 +23,10 @@ export const weiToUnit = (unitValue: number) => {
 export const unitToWei = (weiValue: number) => {
   return ethers.formatUnits(weiValue, 0);
 };
+
+export const convertRoleToBytes32 = (role: string) => {
+  return ethers.solidityPackedKeccak256(
+    ["string"],
+    [role],
+  )
+}

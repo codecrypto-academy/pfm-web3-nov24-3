@@ -33,30 +33,35 @@ contract Distributor is IDistributor, UserConstant {
 
     /**
      * @notice
+     * @param shipper address who send the jewels
      * @param receiver address who send the jewels
      * @param jewelChain array of jewels to deliver
      */
-    function newShipment(address receiver, bytes calldata jewelChain) external override checkAddresZero {
+    function newShipment(address shipper, address receiver, bytes calldata jewelChain)
+        external
+        override
+        checkAddresZero
+    {
         if (
-            !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.RAW_MINERAL_ROLE)
-                && !sc_userJewelChain.checkUserRole(msg.sender, UserConstant.JEWEL_FACTORY_ROLE)
+            !sc_userJewelChain.checkUserRole(shipper, UserConstant.RAW_MINERAL_ROLE)
+                && !sc_userJewelChain.checkUserRole(shipper, UserConstant.JEWEL_FACTORY_ROLE)
         ) {
-            revert Distributor__UserNotAuthorized(msg.sender);
+            revert Distributor__UserNotAuthorized(shipper);
         }
 
         uint256 date = block.timestamp;
 
-        bytes32 trackingId = keccak256(abi.encodePacked(msg.sender, date));
+        bytes32 trackingId = keccak256(abi.encodePacked(shipper, date));
 
         Delivery memory delivery = Delivery({
-            shipper: msg.sender,
+            shipper: shipper,
             receiver: receiver,
             trackingId: trackingId,
             shipperDate: date,
             deliveryDate: 0,
             jewelChain: jewelChain
         });
-        emit Distributor__Shipment(trackingId, msg.sender, receiver, delivery.shipperDate, delivery);
+        emit Distributor__Shipment(trackingId, shipper, receiver, delivery.shipperDate, delivery);
     }
 
     /**
@@ -70,17 +75,15 @@ contract Distributor is IDistributor, UserConstant {
         Delivery memory delivery = deliveriesPending[trackingId];
         delivery.deliveryDate = block.timestamp;
 
-        // decode jewelChain
-        IJewelChain.JewelRecord[] memory jewelRecord = abi.decode(delivery.jewelChain, (IJewelChain.JewelRecord[]));
         address receiver = delivery.receiver;
 
-        sendJewels(jewelRecord, receiver, trackingId);
+        sendJewels(delivery.jewelChain, receiver, trackingId);
 
         delete deliveriesPending[trackingId];
         emit Distributor__Delivery(trackingId, delivery.receiver, msg.sender, delivery.deliveryDate, delivery);
     }
 
-    function sendJewels(IJewelChain.JewelRecord[] memory jewelRecord, address receiver, bytes32 trackingId) private {
+    function sendJewels(bytes memory jewelRecord, address receiver, bytes32 trackingId) private {
         bytes32 _roleUserDelivery = sc_userJewelChain.getRoleUser(receiver);
         if (_roleUserDelivery == UserConstant.RAW_MINERAL_ROLE) {
             sc_rawMineral.recieveMaterial(msg.sender, receiver, trackingId, jewelRecord);
