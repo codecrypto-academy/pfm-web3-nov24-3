@@ -17,11 +17,11 @@ export default function RawMineralDetails({ params }: { params: { id: string } }
     isLoading,
     error,
     getAllRawMineral
-  } = useRawMineralService(provider, user?.address);
+  } = useRawMineralService(provider);
 
   useEffect(() => {
     if (user?.address) {
-      getAllRawMineral();
+      getAllRawMineral(user.address);
     }
   }, [user?.address, getAllRawMineral]);
 
