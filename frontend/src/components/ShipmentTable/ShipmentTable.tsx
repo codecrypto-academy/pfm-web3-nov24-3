@@ -34,9 +34,9 @@ export function ShipmentTable({ listShipments }: ShipmentTableProps) {
         </thead>
         <tbody>
           {listShipments.map((order) => (
-            <tr key={order.uniqueId}>
+            <tr key={order.trackingId}>
               <td>
-                <TruncateItem item={order.uniqueId} />
+                <TruncateItem item={order.trackingId} />
               </td>
               <td>
                 <TruncateItem item={order.supplier} />
@@ -52,7 +52,7 @@ export function ShipmentTable({ listShipments }: ShipmentTableProps) {
               <td className="space-x-2">
                 <Link
                   href={{
-                    pathname: `/dashboard/shipment/${order.uniqueId}`,
+                    pathname: `/dashboard/shipment/${order.trackingId}`,
                     query: { delivery: JSON.stringify(order) },
                   }}
                   className="btn btn-sm btn-ghost"

@@ -37,7 +37,7 @@ export default function PurchaseOrderDetails() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">
-          Detalles de Orden de Compra #{shipment?.uniqueId}
+          Detalles de Orden de Compra #{shipment?.trackingId}
         </h1>
         <button onClick={() => router.back()} className="btn btn-outline">
           Volver
