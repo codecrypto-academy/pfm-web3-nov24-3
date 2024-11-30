@@ -18,7 +18,7 @@ export class DistributorSC implements IDistributor {
     return shipmentsSC;
   }
   getShipmentByTrackingId(trackingId: string): Promise<ShipmentSC> {
-    throw new Error("Method not implemented.");
+    throw new Error("Method not implemented." + trackingId);
   }
 
   async confirmDelivery(trackingId: string): Promise<TransactionReceipt> {
