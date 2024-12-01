@@ -86,7 +86,7 @@ contract Distributor is IDistributor, UserConstant {
     {
         uint256 index = deliveriesPending[trackingId];
 
-        Delivery memory delivery = deliveries[index];
+        Delivery memory delivery = deliveries[index - 1];
         delivery.deliveryDate = block.timestamp;
 
         address receiver = delivery.receiver;
