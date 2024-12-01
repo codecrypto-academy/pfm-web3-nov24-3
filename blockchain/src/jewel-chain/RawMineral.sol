@@ -108,7 +108,6 @@ contract RawMineral is IJewelChain, UserConstant {
     function orderMaterial(address supplier, bytes32 uniqueId, uint256 requestedQuantity)
         external
         override
-        isSupplierRawMineral(supplier)
         existRawMineral(uniqueId)
     {
         // comprobar que solo pueden acceder roles JEWEL_FACTORY
