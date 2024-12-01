@@ -42,7 +42,7 @@ contract RawMineral is IJewelChain, UserConstant {
 
     modifier existRawMineral(bytes32 uniqueId) {
         uint256 index = _rawJewelMap[uniqueId];
-        if (index == 0) {
+        if (index == 0 || index > jewelArray.length) {
             revert RawMineral__UniqueIdNotFound(uniqueId);
         }
         _;
