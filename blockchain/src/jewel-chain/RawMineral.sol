@@ -212,4 +212,7 @@ contract RawMineral is IJewelChain, UserConstant {
     function decodeJewel(bytes calldata encodedData) external pure returns (JewelRecord memory) {
         return abi.decode(encodedData, (JewelRecord));
     }
+
+    // Añadir el error para cantidad insuficiente
+    error RawMineral__InsufficientQuantity(bytes32 uniqueId, uint256 requested, uint256 available);
 }
