@@ -49,8 +49,8 @@ export class RawMineralService {
     return rawMineral;
   }
 
-  public async orderMaterial(provider: string, uniqueId: string): Promise<string> {
-    const tx: TransactionReceipt = await this.rawMineralSC.orderMaterial(provider, uniqueId);
+  public async orderMaterial(provider: string, uniqueId: string, quantity: number): Promise<string> {
+    const tx: TransactionReceipt = await this.rawMineralSC.orderMaterial(provider, uniqueId, quantity);
     return tx.hash;
   }
 

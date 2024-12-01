@@ -19,7 +19,7 @@ export const useRawMineralOrders = (provider: BrowserProvider | null) => {
       if (!rawMineralService) return;
       try {
         setIsLoading(true);
-        const txHash = await rawMineralService.orderMaterial(address, uniqueId);
+        const txHash = await rawMineralService.orderMaterial(address, uniqueId, 2); // TODO 
         return txHash;
       } catch (err) {
         console.error("Error to order mineral:", err);

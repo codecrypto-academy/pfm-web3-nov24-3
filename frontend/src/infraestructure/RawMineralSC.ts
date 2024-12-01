@@ -31,10 +31,10 @@ export class RawMineralSC implements IJewelChain {
     return rawMineral;
   }
 
-  async orderMaterial(provider: string, uniqueId: string): Promise<TransactionReceipt> {
+  async orderMaterial(provider: string, uniqueId: string, quantity: number): Promise<TransactionReceipt> {
     const contract: Contract = await this.getContractRawMineal();
-    const gasEstimate: bigint = await contract.orderMaterial.estimateGas(provider, uniqueId);
-    const rawMineralOrder: TransactionResponse = await contract.orderMaterial(provider, uniqueId, { gasLimite: gasEstimate });
+    const gasEstimate: bigint = await contract.orderMaterial.estimateGas(provider, uniqueId, quantity);
+    const rawMineralOrder: TransactionResponse = await contract.orderMaterial(provider, uniqueId, quantity, { gasLimit: gasEstimate });
     const rawMineralTransaction: TransactionReceipt | null = await rawMineralOrder.wait();
     if (rawMineralTransaction == null) {
       throw Error('Transaction failed');
