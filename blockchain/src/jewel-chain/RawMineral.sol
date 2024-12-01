@@ -42,7 +42,7 @@ contract RawMineral is IJewelChain, UserConstant {
 
     modifier existRawMineral(bytes32 uniqueId) {
         uint256 index = _rawJewelMap[uniqueId];
-        if (index == 0 || index > jewelArray.length) {
+        if (index == 0 || (index-1) >= jewelArray.length) {
             revert RawMineral__UniqueIdNotFound(uniqueId);
         }
         _;
@@ -162,20 +162,30 @@ contract RawMineral is IJewelChain, UserConstant {
         existRawMineral(uniqueId)
     {
         uint256 index = _rawJewelMap[uniqueId];
+        require(index > 0 && index <= jewelArray.length, "Invalid index");
+
         JewelRecord memory jewelRecord = jewelArray[index - 1];
-        // quitamos el elemtno del array
+        
+        // Verificar que el pedido existe y es válido
+        require(indexOrder > 0 && indexOrder <= _orders[msg.sender].length, "Invalid order index");
+        JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
+        
+        // Verificar que el uniqueId coincide con el pedido
+        require(jewelToSend.uniqueId == uniqueId, "Order does not match uniqueId");
+
+        // quitamos el elemento del array principal
         if (jewelArray.length != index) {
             jewelArray[index - 1] = jewelArray[jewelArray.length - 1];
             bytes32 uniqueIdLast = jewelArray[jewelArray.length - 1].uniqueId;
             _rawJewelMap[uniqueIdLast] = index;
         }
         jewelArray.pop();
+        delete _rawJewelMap[uniqueId];
 
         bytes memory jewelBytes = abi.encode(jewelRecord);
 
-        JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
-        // quitamos de los pedidos
-        if (_orders[msg.sender].length == indexOrder) {
+        // quitamos de los pedidos manteniendo el orden
+        if (_orders[msg.sender].length != indexOrder) {
             _orders[msg.sender][indexOrder - 1] = _orders[msg.sender][_orders[msg.sender].length - 1];
         }
         _orders[msg.sender].pop();
@@ -215,4 +225,6 @@ contract RawMineral is IJewelChain, UserConstant {
 
     // Añadir el error para cantidad insuficiente
     error RawMineral__InsufficientQuantity(bytes32 uniqueId, uint256 requested, uint256 available);
+    error RawMineral__InvalidOrderIndex(uint256 providedIndex, uint256 maxIndex);
+    error RawMineral__OrderMismatch(bytes32 providedId, bytes32 orderId);
 }
