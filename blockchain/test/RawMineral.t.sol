@@ -38,7 +38,7 @@ contract RawMineralTest is Test, UserConstant {
 
         rawMineral = new RawMineral(address(userJewelChain));
 
-         // Configurar el contrato Distributor
+        // Configurar el contrato Distributor
         Distributor distributor = new Distributor(address(rawMineral), address(userJewelChain));
         rawMineral.setDistributorSC(address(distributor));
     }

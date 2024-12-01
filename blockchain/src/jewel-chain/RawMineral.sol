@@ -105,7 +105,7 @@ contract RawMineral is IJewelChain, UserConstant {
         emit JewelChain_Recieve(supplier, distributor, trackingId, jewelRecord);
     }
 
-    function orderMaterial(address supplier, bytes32 uniqueId)
+    function orderMaterial(address supplier, bytes32 uniqueId, uint256 requestedQuantity)
         external
         override
         isSupplierRawMineral(supplier)
@@ -119,18 +119,29 @@ contract RawMineral is IJewelChain, UserConstant {
         // Obtener el array asociado al address
         JewelRecord[] storage jewelRecord = _raw[supplier];
 
-        // Buscar el índice del elemento con el uniqueId
+        // Buscar el índice del elemento con el uniqueId y verificar cantidad
         for (uint256 i = 0; i < jewelRecord.length; i++) {
             if (jewelRecord[i].uniqueId == uniqueId) {
-                jewelRecord[i] = jewelRecord[jewelRecord.length - 1];
-                jewelRecord.pop();
+                // Verificar que hay suficiente cantidad disponible
+                if (jewelRecord[i].quantity < requestedQuantity) {
+                    revert RawMineral__InsufficientQuantity(uniqueId, requestedQuantity, jewelRecord[i].quantity);
+                }
+
+                // Actualizar la cantidad restante
+                jewelRecord[i].quantity -= requestedQuantity;
+
+                // Si la cantidad llega a 0, eliminar el registro
+                if (jewelRecord[i].quantity == 0) {
+                    jewelRecord[i] = jewelRecord[jewelRecord.length - 1];
+                    jewelRecord.pop();
+                }
             }
         }
 
-        JewelToSend memory jeweToSend =
+        JewelToSend memory jewelToSend =
             JewelToSend({to: msg.sender, uniqueId: uniqueId, index: _orders[supplier].length + 1});
 
-        _orders[supplier].push(jeweToSend);
+        _orders[supplier].push(jewelToSend);
         emit JewelChain_NewOrder(supplier, msg.sender, uniqueId);
     }
 
