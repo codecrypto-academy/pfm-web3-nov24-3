@@ -56,6 +56,9 @@ const ROUTE_PERMISSIONS: RoutePermissions = {
     "DISTRIBUTOR_ROLE",
     "STORE_ROLE",
   ],
+  "/dashboard/jewel-factory-inventory": [
+    "JEWEL_FACTORY_ROLE",
+  ],
 };
 
 export default function DashboardLayout({
@@ -176,6 +179,15 @@ export default function DashboardLayout({
             <li>
               <Link href="/dashboard/raw-material">
                 <FaBoxes className="w-4 h-4" /> Inventario
+              </Link>
+            </li>
+          )}
+
+
+          {hasRouteAccess("/dashboard/jewel-factory-inventory") && (
+            <li>
+              <Link href="/dashboard/jewel-factory-inventory">
+                <FaBoxes className="w-4 h-4" /> Inventario de fábrica
               </Link>
             </li>
           )}
