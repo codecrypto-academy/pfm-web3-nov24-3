@@ -26,6 +26,7 @@ contract RawMineralTest is Test, UserConstant {
     uint256 date = block.timestamp;
     uint256 quantity = 100;
     bytes data = abi.encode("Additional data");
+    uint256 _nonce;
 
     function setUp() public {
         // Deploy UserJewelChain
@@ -50,7 +51,7 @@ contract RawMineralTest is Test, UserConstant {
         vm.expectEmit(true, true, true, true); // Verifica topics y datos no indexados
         emit IJewelChain.JewelChain__Created(
             rawMineralAddress,
-            keccak256(abi.encodePacked(rawMineralAddress, block.timestamp)),
+            keccak256(abi.encodePacked(rawMineralAddress, block.timestamp, _nonce++)),
             name,
             date,
             quantity,
