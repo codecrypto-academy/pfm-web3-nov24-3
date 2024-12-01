@@ -6,6 +6,7 @@ import {RawMineral} from "./../src/jewel-chain/RawMineral.sol";
 import {UserJewelChain} from "./../src/user/UserJewelChain.sol";
 import {UserConstant} from "./../src/user/UserConstant.sol";
 import {IJewelChain} from "./../src/jewel-chain/IJewelChain.sol";
+import {Distributor} from "./../src/distributor/Distributor.sol";
 
 contract RawMineralTest is Test, UserConstant {
     enum RecordType {
@@ -36,6 +37,10 @@ contract RawMineralTest is Test, UserConstant {
         userJewelChain.createUser(owner, ADMIN_ROLE, "John Doe");
 
         rawMineral = new RawMineral(address(userJewelChain));
+
+         // Configurar el contrato Distributor
+        Distributor distributor = new Distributor(address(rawMineral), address(userJewelChain));
+        rawMineral.setDistributorSC(address(distributor));
     }
 
     function test_CreateJeweRecordByRawMineralUser() public {
