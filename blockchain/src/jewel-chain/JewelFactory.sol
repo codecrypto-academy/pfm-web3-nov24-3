@@ -9,9 +9,8 @@ import {UserJewelChain} from "./../user/UserJewelChain.sol";
 import {RawMineral} from "./RawMineral.sol";
 import {IJewelChain} from "./IJewelChain.sol";
 import {Distributor} from "./../distributor/Distributor.sol";
-import "forge-std/Test.sol";
 
-contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, Test {
+contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
     // Estructuras
     struct MaterialRequirement {
         bytes32 materialId;
@@ -39,19 +38,19 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
         uint256 quantity;
         uint256 receiptDate;
         bytes32 trackingId;
-        IJewelChain.JewelRecord originalMaterial;  // Mantiene todos los datos originales del material
+        IJewelChain.JewelRecord originalMaterial; // Mantiene todos los datos originales del material
     }
 
     // Mappings
-    mapping(uint256 => JewelMetadata) private _jewelMetadata;
-    mapping(uint256 => address[]) private _ownershipHistory;
-    
+    mapping(uint256 => JewelMetadata) public _jewelMetadata;
+    mapping(uint256 => address[]) public _ownershipHistory;
+
     // Nuevo mapping para el inventario de materiales
-    mapping(bytes32 => MaterialInventory) private _materialInventory;
-    
+    mapping(bytes32 => MaterialInventory) public _materialInventory;
+
     // Modificar el mapping para incluir toda la información
-    mapping(bytes32 => MaterialReceipt) private _materialReceipts;
-    
+    mapping(bytes32 => MaterialReceipt) public _materialReceipts;
+
     // Variables de estado
     UserJewelChain private sc_userJewelChain;
     RawMineral private sc_rawMineral;
@@ -59,30 +58,24 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
     uint256 private _nextTokenId;
 
     // Eventos
-    event JewelCreated(
-        uint256 indexed tokenId,
-        address indexed creator,
-        bytes32 name,
-        MaterialRequirement[] materials
-    );
+    event JewelCreated(uint256 indexed tokenId, address indexed creator, bytes32 name, MaterialRequirement[] materials);
 
     event MaterialConsumed(
-        bytes32 indexed materialId,
-        uint256 indexed tokenId,
-        uint256 requestedQuantity,
-        uint256 availableQuantity
+        bytes32 indexed materialId, uint256 indexed tokenId, uint256 requestedQuantity, uint256 availableQuantity
     );
 
     event MaterialReceived(
-        bytes32 indexed materialId,
-        uint256 quantity,
-        address supplier,
-        uint256 receiptDate,
-        bytes32 trackingId
+        bytes32 indexed materialId, uint256 quantity, address supplier, uint256 receiptDate, bytes32 trackingId
     );
+
+    // Nuevo evento para emitir cuando se actualice el inventario
+    event MaterialInventoryUpdated(bytes32 indexed materialId, uint256 quantity, address supplier);
 
     // Error personalizado
     error JewelFactory__InsufficientMaterialBalance(bytes32 materialId, uint256 requested, uint256 available);
+
+    // Añadir un array para trackear los materialIds
+    bytes32[] private _materialIds;
 
     // Modificadores
     modifier onlyJewelFactory() {
@@ -92,12 +85,9 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
         _;
     }
 
-    constructor(
-        address _userJewelChain,
-        address _rawMineral,
-        address _distributor,
-        string memory baseUri
-    ) ERC1155(baseUri) {
+    constructor(address _userJewelChain, address _rawMineral, address _distributor, string memory baseUri)
+        ERC1155(baseUri)
+    {
         sc_userJewelChain = UserJewelChain(_userJewelChain);
         sc_rawMineral = RawMineral(_rawMineral);
         sc_distributor = Distributor(_distributor);
@@ -115,7 +105,11 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
         // Solo el Distributor puede entregar materiales
         require(msg.sender == address(sc_distributor), "JewelFactory: caller is not the distributor");
 
-        // Actualizar inventario
+        // Si es la primera vez que recibimos este material, añadirlo al array
+        if (_materialInventory[materialId].quantity == 0) {
+            _materialIds.push(materialId);
+        }
+
         _materialInventory[materialId].materialId = materialId;
         _materialInventory[materialId].quantity += quantity;
         _materialInventory[materialId].supplier = supplier;
@@ -130,22 +124,15 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
             originalMaterial: originalMaterial
         });
 
-        emit MaterialReceived(
-            materialId,
-            quantity,
-            supplier,
-            block.timestamp,
-            trackingId
-        );
+        emit MaterialReceived(materialId, quantity, supplier, block.timestamp, trackingId);
     }
 
     // Función modificada para crear joyas
-    function createJewel(
-        bytes32 name,
-        uint256 quantity,
-        MaterialRequirement[] calldata materials,
-        bytes calldata data
-    ) external onlyJewelFactory returns (uint256) {
+    function createJewel(bytes32 name, uint256 quantity, MaterialRequirement[] calldata materials, bytes calldata data)
+        external
+        onlyJewelFactory
+        returns (uint256)
+    {
         uint256 tokenId = _nextTokenId++;
 
         // Verificar y consumir materias primas del inventario
@@ -153,31 +140,23 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
 
         for (uint256 i = 0; i < materials.length; i++) {
             MaterialInventory storage inventory = _materialInventory[materials[i].materialId];
-            
+
             // Verificar que hay suficiente material en inventario
             if (inventory.quantity < materials[i].quantity) {
                 revert JewelFactory__InsufficientMaterialBalance(
-                    materials[i].materialId,
-                    materials[i].quantity,
-                    inventory.quantity
+                    materials[i].materialId, materials[i].quantity, inventory.quantity
                 );
             }
 
             // Consumir material del inventario
             inventory.quantity -= materials[i].quantity;
-            
+
             // Registrar material usado
-            jewelMaterials.push(MaterialRequirement({
-                materialId: materials[i].materialId,
-                quantity: materials[i].quantity
-            }));
-            
-            emit MaterialConsumed(
-                materials[i].materialId,
-                tokenId,
-                materials[i].quantity,
-                inventory.quantity
+            jewelMaterials.push(
+                MaterialRequirement({materialId: materials[i].materialId, quantity: materials[i].quantity})
             );
+
+            emit MaterialConsumed(materials[i].materialId, tokenId, materials[i].quantity, inventory.quantity);
         }
 
         // Crear metadata de la joya
@@ -193,53 +172,36 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
         _mint(msg.sender, tokenId, quantity, "");
 
         emit JewelCreated(tokenId, msg.sender, name, materials);
-        
+
         return tokenId;
     }
 
-    function getJewelMetadata(uint256 tokenId) 
-        external 
-        view 
-        returns (JewelMetadata memory) 
-    {
+    function getJewelMetadata(uint256 tokenId) external view returns (JewelMetadata memory) {
         return _jewelMetadata[tokenId];
     }
 
-    function getOwnershipHistory(uint256 tokenId) 
-        external 
-        view 
-        returns (address[] memory) 
-    {
+    function getOwnershipHistory(uint256 tokenId) external view returns (address[] memory) {
         return _ownershipHistory[tokenId];
     }
 
     // Nueva función para consultar el inventario de materiales
-    function getMaterialInventory(bytes32 materialId) 
-        external 
-        view 
-        returns (MaterialInventory memory) 
-    {
+    function getMaterialInventory(bytes32 materialId) external view returns (MaterialInventory memory) {
         return _materialInventory[materialId];
     }
 
     // Nueva función para consultar el recibo de un material
-    function getMaterialReceipt(bytes32 materialId) 
-        external 
-        view 
-        returns (MaterialReceipt memory) 
-    {
+    function getMaterialReceipt(bytes32 materialId) external view returns (MaterialReceipt memory) {
         return _materialReceipts[materialId];
     }
 
     // Reemplazar _beforeTokenTransfer por _update
-    function _update(
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory values
-    ) internal virtual override(ERC1155, ERC1155Supply) {
+    function _update(address from, address to, uint256[] memory ids, uint256[] memory values)
+        internal
+        virtual
+        override(ERC1155, ERC1155Supply)
+    {
         super._update(from, to, ids, values);
-        
+
         // Actualizar historial solo para transferencias (no mint/burn)
         if (from != address(0) && to != address(0)) {
             for (uint256 i = 0; i < ids.length; i++) {
@@ -247,4 +209,33 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant, 
             }
         }
     }
-} 
+
+    // Función modificada para obtener el inventario
+    function getAllMaterialsInventory() external view returns (bytes32[] memory, MaterialInventory[] memory) {
+        uint256 activeCount = 0;
+
+        // Primero contamos cuántos materiales tienen cantidad > 0
+        for (uint256 i = 0; i < _materialIds.length; i++) {
+            if (_materialInventory[_materialIds[i]].quantity > 0) {
+                activeCount++;
+            }
+        }
+
+        // Crear arrays del tamaño exacto necesario
+        bytes32[] memory activeIds = new bytes32[](activeCount);
+        MaterialInventory[] memory activeInventories = new MaterialInventory[](activeCount);
+
+        // Llenar los arrays solo con materiales activos
+        uint256 currentIndex = 0;
+        for (uint256 i = 0; i < _materialIds.length; i++) {
+            bytes32 materialId = _materialIds[i];
+            if (_materialInventory[materialId].quantity > 0) {
+                activeIds[currentIndex] = materialId;
+                activeInventories[currentIndex] = _materialInventory[materialId];
+                currentIndex++;
+            }
+        }
+
+        return (activeIds, activeInventories);
+    }
+}
