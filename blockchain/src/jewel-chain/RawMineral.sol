@@ -12,6 +12,7 @@ contract RawMineral is IJewelChain, UserConstant {
     mapping(bytes32 => uint256) private _rawJewelMap;
 
     JewelRecord[] jewelArray;
+    uint256 private _nonce;
 
     // smart contract
     UserJewelChain private sc_userJewelChain;
@@ -57,7 +58,7 @@ contract RawMineral is IJewelChain, UserConstant {
         checkAddresZero
         checkRoleUser(UserConstant.RAW_MINERAL_ROLE)
     {
-        bytes32 uniqueId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
+        bytes32 uniqueId = keccak256(abi.encodePacked(msg.sender, block.timestamp, _nonce++));
         JewelRecord memory jewelRecord = JewelRecord({
             supplier: msg.sender,
             uniqueId: uniqueId,
