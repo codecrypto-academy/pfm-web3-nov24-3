@@ -44,13 +44,13 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
     // Mappings
     mapping(uint256 => JewelMetadata) private _jewelMetadata;
     mapping(uint256 => address[]) private _ownershipHistory;
-    
+
     // Nuevo mapping para el inventario de materiales
     mapping(bytes32 => MaterialInventory) private _materialInventory;
-    
+
     // Modificar el mapping para incluir toda la información
     mapping(bytes32 => MaterialReceipt) private _materialReceipts;
-    
+
     // Variables de estado
     UserJewelChain private sc_userJewelChain;
     RawMineral private sc_rawMineral;
@@ -178,14 +178,7 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
         // Mintear tokens ERC1155
         _mint(msg.sender, tokenId, quantity, "");
 
-        emit JewelCreated(
-            tokenId,
-            msg.sender,
-            name,
-            materials,
-            block.timestamp,
-            data
-        );
+        emit JewelCreated(tokenId, msg.sender, name, materials, block.timestamp, data);
 
         return tokenId;
     }
@@ -269,11 +262,12 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
     function getAllJewels() external view returns (JewelComplete[] memory) {
         uint256 totalJewels = _nextTokenId - 1;
         JewelComplete[] memory jewels = new JewelComplete[](totalJewels);
-        
+
         for (uint256 i = 1; i <= totalJewels; i++) {
-            if (exists(i)) { // Verificar si el token existe
+            if (exists(i)) {
+                // Verificar si el token existe
                 JewelMetadata storage metadata = _jewelMetadata[i];
-                jewels[i-1] = JewelComplete({
+                jewels[i - 1] = JewelComplete({
                     tokenId: i,
                     name: metadata.name,
                     creationDate: metadata.creationDate,
@@ -285,7 +279,7 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
                 });
             }
         }
-        
+
         return jewels;
     }
 }

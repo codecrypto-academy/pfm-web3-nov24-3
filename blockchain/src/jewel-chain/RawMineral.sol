@@ -42,7 +42,7 @@ contract RawMineral is IJewelChain, UserConstant {
 
     modifier existRawMineral(bytes32 uniqueId) {
         uint256 index = _rawJewelMap[uniqueId];
-        if (index == 0 || (index-1) >= jewelArray.length) {
+        if (index == 0 || (index - 1) >= jewelArray.length) {
             revert RawMineral__UniqueIdNotFound(uniqueId);
         }
         _;
@@ -164,11 +164,11 @@ contract RawMineral is IJewelChain, UserConstant {
         require(index > 0 && index <= jewelArray.length, "Invalid index");
 
         JewelRecord memory jewelRecord = jewelArray[index - 1];
-        
+
         // Verificar que el pedido existe y es válido
         require(indexOrder > 0 && indexOrder <= _orders[msg.sender].length, "Invalid order index");
         JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
-        
+
         // Verificar que el uniqueId coincide con el pedido
         require(jewelToSend.uniqueId == uniqueId, "Order does not match uniqueId");
 
