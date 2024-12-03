@@ -15,6 +15,7 @@ import {
   FaSignOutAlt,
   FaMapMarkerAlt,
   FaShoppingBag,
+  FaShippingFast,
 } from "react-icons/fa";
 import { usePermissions } from "@/hooks/usePermissions";
 import { UserRole } from "@/types/user";
@@ -55,6 +56,12 @@ const ROUTE_PERMISSIONS: RoutePermissions = {
     "JEWEL_FACTORY_ROLE",
     "DISTRIBUTOR_ROLE",
     "STORE_ROLE",
+  ],
+  "/dashboard/factory-materials-inventory": [
+    "JEWEL_FACTORY_ROLE",
+  ],
+  "/dashboard/jewel-inventory": [
+    "JEWEL_FACTORY_ROLE",
   ],
 };
 
@@ -151,7 +158,7 @@ export default function DashboardLayout({
           {hasRouteAccess("/dashboard/shipment") && (
             <li>
               <Link href="/dashboard/shipment">
-                <FaShoppingCart className="w-4 h-4" /> Pedidos
+                <FaShippingFast className="w-4 h-4" /> Envíos
               </Link>
             </li>
           )}
@@ -176,6 +183,23 @@ export default function DashboardLayout({
             <li>
               <Link href="/dashboard/raw-material">
                 <FaBoxes className="w-4 h-4" /> Inventario
+              </Link>
+            </li>
+          )}
+
+
+          {hasRouteAccess("/dashboard/factory-materials-inventory") && (
+            <li>
+              <Link href="/dashboard/factory-materials-inventory">
+                <FaBoxes className="w-4 h-4" /> Inventario materiales
+              </Link>
+            </li>
+          )}
+
+          {hasRouteAccess("/dashboard/jewel-inventory") && (
+            <li>
+              <Link href="/dashboard/jewel-inventory">
+                <FaBoxes className="w-4 h-4" /> Inventario joyas
               </Link>
             </li>
           )}
