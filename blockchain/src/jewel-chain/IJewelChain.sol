@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.27;
 
+/**
+ * @title IJewelChain es la interfaz general para todos aquellos roles relacionados con la trazabilidad, como minerales, joyas
+ * @author Johan Sebastian y Pau
+ */
 interface IJewelChain {
     // Enum
     enum RecordType {
@@ -16,7 +20,7 @@ interface IJewelChain {
         uint256 date;
         uint256 quantity;
         RecordType recordType;
-        bytes data; // se utiliza este ultimo campo para que cada extension puede extender la informacion que necesite.
+        bytes data;
     }
 
     struct JewelToSend {
@@ -53,12 +57,23 @@ interface IJewelChain {
     );
 
     event JewelChain_Recieve(
-        address indexed supplier, address indexed distributor, bytes32 indexed trackingId, JewelRecord jewelRecord
+        address indexed supplier,
+        address indexed distributor,
+        bytes32 indexed trackingId,
+        JewelRecord jewelRecord
     );
 
-    event JewelChain_NewOrder(address indexed supplier, address indexed receiver, bytes32 indexed uniqueId);
+    event JewelChain_NewOrder(
+        address indexed supplier,
+        address indexed receiver,
+        bytes32 indexed uniqueId
+    );
 
-    event JewelChain__SendNewOrder(address indexed supplier, address indexed receiver, bytes32 indexed uniqueId);
+    event JewelChain__SendNewOrder(
+        address indexed supplier,
+        address indexed receiver,
+        bytes32 indexed uniqueId
+    );
 
     /**
      * @dev Función para crear un nuevo registro de trazabilidad.
@@ -67,20 +82,31 @@ interface IJewelChain {
      * @param quantity Cantidad del material o joya.
      * @param data Datos adicionales específicos del registro.
      */
-    function createJewelRecord(bytes32 name, uint256 date, uint256 quantity, bytes calldata data) external;
+    function createJewelRecord(
+        bytes32 name,
+        uint256 date,
+        uint256 quantity,
+        bytes calldata data
+    ) external;
 
     /**
      * @dev Función para obtener los registros de trazabilidad asociados a un proveedor.
      * @param supplier Dirección del proveedor del cual se desean consultar los registros.
      * @return Array de registros de trazabilidad `JewelRecord`.
      */
-    function getJewelRecordBySupplier(address supplier) external view returns (JewelRecord[] memory);
+    function getJewelRecordBySupplier(
+        address supplier
+    ) external view returns (JewelRecord[] memory);
 
     /**
      * @param jewels Array de registros de trazabilidad `JewelRecord`.
      */
-    function recieveMaterial(address distributor, address suplier, bytes32 trackingId, bytes calldata jewels)
-        external;
+    function recieveMaterial(
+        address distributor,
+        address suplier,
+        bytes32 trackingId,
+        bytes calldata jewels
+    ) external;
 
     /**
      * @dev Función para ordenar un material.
@@ -92,9 +118,14 @@ interface IJewelChain {
     /**
      * @dev funcion que recupera todos los materiales de un supplier
      */
-    function getOrderMaterialList() external view returns (JewelToSend[] memory);
+    function getOrderMaterialList()
+        external
+        view
+        returns (JewelToSend[] memory);
 
     function sendMaterial(bytes32 uniqueId, uint256 indexOrder) external;
 
-    function getJewelByUniqueId(bytes32 uniqueId) external returns (JewelRecord memory);
+    function getJewelByUniqueId(
+        bytes32 uniqueId
+    ) external returns (JewelRecord memory);
 }
