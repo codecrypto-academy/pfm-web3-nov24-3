@@ -1,5 +1,5 @@
-import { BrowserProvider, Contract } from "ethers";
-import { IJewelFactory, MaterialInventory } from "./IJewelFactory";
+import { BrowserProvider, Contract, ethers } from "ethers";
+import { IJewelFactory, MaterialInventory, Jewel, CreateJewelDTO } from "./IJewelFactory";
 import { JEWEL_FACTORY_ABI } from "@/abis/jewel-factory";
 
 export class JewelFactorySC implements IJewelFactory {
@@ -26,5 +26,53 @@ export class JewelFactorySC implements IJewelFactory {
       quantity: Number(inventory.quantity),
       supplier: inventory.supplier
     }));
+  }
+
+  async getAllJewels(): Promise<Jewel[]> {
+    const contract = await this.getContract();
+    const jewels = await contract.getAllJewels();
+    
+    return jewels.map((jewel: any) => ({
+        tokenId: Number(jewel.tokenId),
+        name: ethers.decodeBytes32String(jewel.name),
+        creationDate: Number(jewel.creationDate),
+        creator: jewel.creator,
+        materials: jewel.materials.map((m: any) => ({
+            materialId: m.materialId,
+            quantity: Number(m.quantity)
+        })),
+        data: jewel.data,
+        ownershipHistory: jewel.ownershipHistory,
+        totalSupply: Number(jewel.totalSupply)
+    }));
+  }
+
+  async createJewel(jewel: CreateJewelDTO): Promise<number> {
+    const contract = await this.getContract();
+    
+    const name = ethers.encodeBytes32String(jewel.name);
+    const materials = jewel.materials.map(m => [m.materialId, m.quantity]);
+    const data = ethers.AbiCoder.defaultAbiCoder().encode(
+        ["uint256", "string", "string"],
+        [jewel.data.quality, jewel.data.design, jewel.data.certification]
+    );
+    
+    const tx = await contract.createJewel(name, jewel.quantity, materials, data);
+    const receipt = await tx.wait();
+    
+    const event = receipt.logs.find(
+        (log: any) => log.topics[0] === contract.interface.getEventTopic('JewelCreated')
+    );
+    
+    if (event) {
+        const decodedEvent = contract.interface.decodeEventLog(
+            'JewelCreated',
+            event.data,
+            event.topics
+        );
+        return Number(decodedEvent.tokenId);
+    }
+    
+    throw new Error('No se pudo obtener el ID de la joya creada');
   }
 } 
