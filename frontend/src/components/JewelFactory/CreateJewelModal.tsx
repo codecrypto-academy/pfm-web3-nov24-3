@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreateJewelDTO, MaterialInventory } from "@/infraestructure/IJewelFactory";
 import { useJewelFactoryService } from "@/hooks/jewel-factory/useJewelFactoryService";
 import { useAuth } from "@/context/AuthContext";
@@ -10,8 +10,7 @@ interface CreateJewelModalProps {
 }
 
 export function CreateJewelModal({ isOpen, onClose, onSubmit }: CreateJewelModalProps) {
-    const { provider } = useAuth();
-    const { inventory, getAllMaterialsInventory } = useJewelFactoryService(provider);
+    const { inventory, getAllMaterialsInventory } = useJewelFactoryService();
     
     const [formData, setFormData] = useState<CreateJewelDTO>({
         name: "",
@@ -29,17 +28,49 @@ export function CreateJewelModal({ isOpen, onClose, onSubmit }: CreateJewelModal
         quantity: 0
     });
 
-    const handleAddMaterial = () => {
-        if (selectedMaterial.materialId && selectedMaterial.quantity > 0) {
-            setFormData({
-                ...formData,
-                materials: [...formData.materials, {
-                    materialId: selectedMaterial.materialId,
-                    quantity: selectedMaterial.quantity
-                }]
-            });
-            setSelectedMaterial({ materialId: "", quantity: 0 });
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (isOpen) {
+            getAllMaterialsInventory();
         }
+    }, [isOpen, getAllMaterialsInventory]);
+
+    const handleAddMaterial = () => {
+        setError(null);
+        
+        if (!selectedMaterial.materialId) {
+            setError("Debe seleccionar un material");
+            return;
+        }
+        
+        if (!selectedMaterial.quantity || selectedMaterial.quantity <= 0) {
+            setError("La cantidad debe ser mayor que 0");
+            return;
+        }
+
+        const materialInventory = inventory.find(item => item.materialId === selectedMaterial.materialId);
+        if (!materialInventory) {
+            setError("Material no encontrado en el inventario");
+            return;
+        }
+
+        if (selectedMaterial.quantity > materialInventory.quantity) {
+            setError(`Solo hay ${materialInventory.quantity} unidades disponibles de este material`);
+            return;
+        }
+        console.log(selectedMaterial);
+        console.log(formData);
+
+        setFormData({
+            ...formData,
+            materials: [...formData.materials, {
+                materialId: selectedMaterial.materialId,
+                quantity: selectedMaterial.quantity
+            }]
+        });
+
+        setSelectedMaterial({ materialId: "", quantity: 0 });
     };
 
     const handleRemoveMaterial = (index: number) => {
@@ -49,8 +80,42 @@ export function CreateJewelModal({ isOpen, onClose, onSubmit }: CreateJewelModal
         });
     };
 
+    const validateForm = (): boolean => {
+        if (!formData.name.trim()) {
+            setError("El nombre de la joya es requerido");
+            return false;
+        }
+        if (formData.quantity <= 0) {
+            setError("La cantidad debe ser mayor que 0");
+            return false;
+        }
+        if (formData.materials.length === 0) {
+            setError("Se requiere al menos un material");
+            return false;
+        }
+        if (formData.data.quality <= 0) {
+            setError("La calidad debe ser mayor que 0");
+            return false;
+        }
+        if (!formData.data.design.trim()) {
+            setError("El diseño es requerido");
+            return false;
+        }
+        if (!formData.data.certification.trim()) {
+            setError("La certificación es requerida");
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
+        
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             await onSubmit(formData);
             onClose();
@@ -65,6 +130,7 @@ export function CreateJewelModal({ isOpen, onClose, onSubmit }: CreateJewelModal
                 }
             });
         } catch (error) {
+            setError(error instanceof Error ? error.message : 'Error desconocido al crear la joya');
             console.error("Error al crear la joya:", error);
         }
     };
@@ -73,8 +139,15 @@ export function CreateJewelModal({ isOpen, onClose, onSubmit }: CreateJewelModal
 
     return (
         <div className="modal modal-open">
-            <div className="modal-box max-w-2xl">
+            <div className="modal-box w-11/12 max-w-5xl h-[85vh] overflow-y-auto">
                 <h3 className="font-bold text-lg mb-4">Fabricar Nueva Joya</h3>
+                
+                {error && (
+                    <div className="alert alert-error mb-4">
+                        <p>{error}</p>
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Información básica */}
                     <div className="grid grid-cols-2 gap-4">
@@ -148,20 +221,36 @@ export function CreateJewelModal({ isOpen, onClose, onSubmit }: CreateJewelModal
 
                         {/* Lista de materiales seleccionados */}
                         <div className="mt-2">
-                            {formData.materials.map((material, index) => (
-                                <div key={index} className="flex items-center gap-2 mt-2">
-                                    <span className="flex-1">
-                                        {material.materialId} - Cantidad: {material.quantity}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        className="btn btn-ghost btn-sm"
-                                        onClick={() => handleRemoveMaterial(index)}
-                                    >
-                                        ✕
-                                    </button>
+                            {formData.materials.length > 0 ? (
+                                <div className="bg-base-200 p-2 rounded-lg">
+                                    <h4 className="font-semibold mb-2">Materiales seleccionados:</h4>
+                                    {formData.materials.map((material, index) => {
+                                        const materialInfo = inventory.find(item => item.materialId === material.materialId);
+                                        return (
+                                            <div key={index} className="flex items-center justify-between gap-2 mb-2 last:mb-0 bg-base-100 p-2 rounded">
+                                                <span className="flex-1">
+                                                    {materialInfo ? (
+                                                        <>Material: {material.materialId} - Cantidad: {material.quantity}</>
+                                                    ) : (
+                                                        <>Material no encontrado</>
+                                                    )}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-ghost btn-sm text-error"
+                                                    onClick={() => handleRemoveMaterial(index)}
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            ))}
+                            ) : (
+                                <div className="text-sm text-gray-500 mt-2">
+                                    No hay materiales seleccionados
+                                </div>
+                            )}
                         </div>
                     </div>
 

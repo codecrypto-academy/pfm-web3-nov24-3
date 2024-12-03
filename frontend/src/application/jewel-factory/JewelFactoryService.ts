@@ -40,6 +40,7 @@ export class JewelFactoryService {
       const tokenId = await this.jewelFactorySC.createJewel(jewelData);
       return tokenId;
     } catch (error) {
+      console.error("Error en JewelFactoryService.createJewel:", error);
       throw new Error(error instanceof Error ? error.message : 'Error desconocido al crear la joya');
     }
   }

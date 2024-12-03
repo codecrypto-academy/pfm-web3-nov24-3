@@ -47,32 +47,47 @@ export class JewelFactorySC implements IJewelFactory {
     }));
   }
 
-  async createJewel(jewel: CreateJewelDTO): Promise<number> {
-    const contract = await this.getContract();
-    
-    const name = ethers.encodeBytes32String(jewel.name);
-    const materials = jewel.materials.map(m => [m.materialId, m.quantity]);
-    const data = ethers.AbiCoder.defaultAbiCoder().encode(
+  async createJewel(jewelData: CreateJewelDTO): Promise<number> {
+    try {
+      const contract = await this.getContract();
+      
+      // Convertir el nombre a bytes32
+      const nameBytes = ethers.encodeBytes32String(jewelData.name);
+      
+      // Preparar los datos adicionales
+      const data = ethers.AbiCoder.defaultAbiCoder().encode(
         ["uint256", "string", "string"],
-        [jewel.data.quality, jewel.data.design, jewel.data.certification]
-    );
-    
-    const tx = await contract.createJewel(name, jewel.quantity, materials, data);
-    const receipt = await tx.wait();
-    
-    const event = receipt.logs.find(
-        (log: any) => log.topics[0] === contract.interface.getEventTopic('JewelCreated')
-    );
-    
-    if (event) {
-        const decodedEvent = contract.interface.decodeEventLog(
-            'JewelCreated',
-            event.data,
-            event.topics
-        );
-        return Number(decodedEvent.tokenId);
+        [jewelData.data.quality, jewelData.data.design, jewelData.data.certification]
+      );
+
+      // Estimar el gas antes de la transacción
+      const gasEstimate = await contract.createJewel.estimateGas(
+        nameBytes,
+        jewelData.quantity,
+        jewelData.materials,
+        data
+      );
+
+      // Ejecutar la transacción con el gas estimado
+      const transaction = await contract.createJewel(
+        nameBytes,
+        jewelData.quantity,
+        jewelData.materials,
+        data,
+        { gasLimit: gasEstimate }
+      );
+
+      // Esperar a que la transacción se confirme
+      const receipt = await transaction.wait();
+
+      // Buscar el evento de creación de joya en el recibo
+      const event = receipt.logs[0]; // Asumiendo que el evento que nos interesa es el primero
+      const tokenId = Number(event.topics[1]); // El tokenId debería estar en el primer topic después del identificador del evento
+
+      return tokenId;
+    } catch (error) {
+      console.error("Error en createJewel:", error);
+      throw new Error(error instanceof Error ? error.message : 'Error desconocido al crear la joya');
     }
-    
-    throw new Error('No se pudo obtener el ID de la joya creada');
   }
 } 
