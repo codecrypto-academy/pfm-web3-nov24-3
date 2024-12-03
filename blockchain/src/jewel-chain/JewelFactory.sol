@@ -42,15 +42,15 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
     }
 
     // Mappings
-    mapping(uint256 => JewelMetadata) public _jewelMetadata;
-    mapping(uint256 => address[]) public _ownershipHistory;
-
+    mapping(uint256 => JewelMetadata) private _jewelMetadata;
+    mapping(uint256 => address[]) private _ownershipHistory;
+    
     // Nuevo mapping para el inventario de materiales
-    mapping(bytes32 => MaterialInventory) public _materialInventory;
-
+    mapping(bytes32 => MaterialInventory) private _materialInventory;
+    
     // Modificar el mapping para incluir toda la información
-    mapping(bytes32 => MaterialReceipt) public _materialReceipts;
-
+    mapping(bytes32 => MaterialReceipt) private _materialReceipts;
+    
     // Variables de estado
     UserJewelChain private sc_userJewelChain;
     RawMineral private sc_rawMineral;
@@ -58,7 +58,14 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
     uint256 private _nextTokenId;
 
     // Eventos
-    event JewelCreated(uint256 indexed tokenId, address indexed creator, bytes32 name, MaterialRequirement[] materials);
+    event JewelCreated(
+        uint256 indexed tokenId,
+        address indexed creator,
+        bytes32 name,
+        MaterialRequirement[] materials,
+        uint256 creationDate,
+        bytes data
+    );
 
     event MaterialConsumed(
         bytes32 indexed materialId, uint256 indexed tokenId, uint256 requestedQuantity, uint256 availableQuantity
@@ -171,7 +178,14 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
         // Mintear tokens ERC1155
         _mint(msg.sender, tokenId, quantity, "");
 
-        emit JewelCreated(tokenId, msg.sender, name, materials);
+        emit JewelCreated(
+            tokenId,
+            msg.sender,
+            name,
+            materials,
+            block.timestamp,
+            data
+        );
 
         return tokenId;
     }
@@ -237,5 +251,41 @@ contract JewelFactory is ERC1155, ERC1155Burnable, ERC1155Supply, UserConstant {
         }
 
         return (activeIds, activeInventories);
+    }
+
+    // Nueva estructura para devolver toda la información de una joya
+    struct JewelComplete {
+        uint256 tokenId;
+        bytes32 name;
+        uint256 creationDate;
+        address creator;
+        MaterialRequirement[] materials;
+        bytes data;
+        address[] ownershipHistory;
+        uint256 totalSupply;
+    }
+
+    // Nueva función para obtener todas las joyas
+    function getAllJewels() external view returns (JewelComplete[] memory) {
+        uint256 totalJewels = _nextTokenId - 1;
+        JewelComplete[] memory jewels = new JewelComplete[](totalJewels);
+        
+        for (uint256 i = 1; i <= totalJewels; i++) {
+            if (exists(i)) { // Verificar si el token existe
+                JewelMetadata storage metadata = _jewelMetadata[i];
+                jewels[i-1] = JewelComplete({
+                    tokenId: i,
+                    name: metadata.name,
+                    creationDate: metadata.creationDate,
+                    creator: metadata.creator,
+                    materials: metadata.materials,
+                    data: metadata.data,
+                    ownershipHistory: _ownershipHistory[i],
+                    totalSupply: totalSupply(i)
+                });
+            }
+        }
+        
+        return jewels;
     }
 }
