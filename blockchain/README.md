@@ -9,6 +9,7 @@
   - [⚙️ Instalación](#️-instalación)
     - [📝 Documentación de los Smart Contracts](#-documentación-de-los-smart-contracts)
       - [Acceso a la Documentación](#acceso-a-la-documentación)
+      - [Comunicacion](#comunicacion)
   - [🧑‍💻 Despliegue de Contratos](#-despliegue-de-contratos)
     - [Valores requeridos en el archivo `.env`](#valores-requeridos-en-el-archivo-env)
     - [Despliegue de Contratos](#despliegue-de-contratos)
@@ -65,6 +66,9 @@ Sigue estos pasos para visualizar la documentación:
 2. **Acceder a la documentación**:  
    Abre tu navegador web y ve a la URL:
    [http://localhost:4000](http://localhost:4000)
+
+#### Comunicacion
+![comunication](./../documents/smart-contract/comunicaion-sc.png)
 
 ---
 
