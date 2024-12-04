@@ -65,6 +65,20 @@ export const useUserService = (provider: BrowserProvider | null) => {
     }
   }, []);
 
+  const getUserName = useCallback(async (address: string) => {
+    if (!userService) return;
+
+    try {
+      setIsLoading(true);
+      return await userService.getUserName(address);
+    } catch (error) {
+      console.error("Error getUserName", error);
+      return "";
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     userList,
@@ -72,5 +86,6 @@ export const useUserService = (provider: BrowserProvider | null) => {
     deleteUser,
     listUsers,
     listUserByRole,
+    getUserName,
   };
 };

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useRawMineralOrders } from "@/hooks/raw-mineral/useRawMineralOrders";
 import { useAuth } from "@/context/AuthContext";
 import { ButtonLoading } from "@/components/button/ButtonLoading";
+import { useUserService } from "@/hooks/user/useUserService";
 
 const mapPrice: Record<string, number> = {
   Diamante: 100,
@@ -21,12 +22,24 @@ export default function SalesOrderDetails() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoading, sendMaterial } = useRawMineralOrders(provider);
+  const { getUserName } = useUserService(provider);
   const [orderJewel, setOrderJewel] = useState<JewelOrder | null>(null);
+  const [clientName, setClientName] = useState<string>("");
 
   useEffect(() => {
     const order = searchParams.get("order");
     setOrderJewel(order ? JSON.parse(order) : null);
   }, [searchParams]);
+
+  useEffect(() => {
+    const fetchClientName = async () => {
+      if (orderJewel?.to) {
+        const name = await getUserName(orderJewel.to);
+        setClientName(name);
+      }
+    };
+    fetchClientName();
+  }, [orderJewel, getUserName]);
 
   const handlerClick = async () => {
     if (orderJewel) {
@@ -58,7 +71,14 @@ export default function SalesOrderDetails() {
                   : "-"}
               </p>
               <p>
-                <span className="font-bold">Cliente:</span> {orderJewel?.to}
+                <span className="font-bold">Cliente:</span>{" "}
+                {clientName ? (
+                  <>
+                    {clientName} <span className="text-sm text-gray-500">({orderJewel?.to})</span>
+                  </>
+                ) : (
+                  orderJewel?.to
+                )}
               </p>
               <p>
                 <span className="font-bold">Estado:</span> Pendiente{" "}
