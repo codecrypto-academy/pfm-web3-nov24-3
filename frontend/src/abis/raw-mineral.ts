@@ -34,6 +34,38 @@ export const RAW_MINERAL_ABI = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "providedIndex",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "RawMineral__InvalidOrderIndex",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "providedId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "orderId",
+				"type": "bytes32"
+			}
+		],
+		"name": "RawMineral__OrderMismatch",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "supplierAddress",
 				"type": "address"
@@ -541,6 +573,11 @@ export const RAW_MINERAL_ABI = [
 					{
 						"internalType": "uint256",
 						"name": "index",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
 						"type": "uint256"
 					}
 				],
