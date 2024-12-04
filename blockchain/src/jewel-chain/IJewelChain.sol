@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.27;
 
+/**
+ * @title IJewelChain es la interfaz general para todos aquellos roles relacionados con la trazabilidad, como minerales, joyas
+ * @author Johan Sebastian y Pau
+ */
 interface IJewelChain {
     // Enum
     enum RecordType {
@@ -16,7 +20,7 @@ interface IJewelChain {
         uint256 date;
         uint256 quantity;
         RecordType recordType;
-        bytes data; // se utiliza este ultimo campo para que cada extension puede extender la informacion que necesite.
+        bytes data;
     }
 
     struct JewelToSend {

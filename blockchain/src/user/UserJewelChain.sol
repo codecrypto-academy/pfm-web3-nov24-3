@@ -181,12 +181,12 @@ contract UserJewelChain is IUserJewelChain, Ownable, AccessControl, UserConstant
         return filteredUsers;
     }
 
-    function getUserName(address _userAddress) 
-        external 
-        view 
-        override 
-        checkIfUserExist(_userAddress) 
-        returns (string memory) 
+    function getUserName(address _userAddress)
+        external
+        view
+        override
+        checkIfUserExist(_userAddress)
+        returns (string memory)
     {
         User memory user = _getUser(_userAddress);
         return user.name;
