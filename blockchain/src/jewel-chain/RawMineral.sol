@@ -137,8 +137,12 @@ contract RawMineral is IJewelChain, UserConstant {
             }
         }
 
-        JewelToSend memory jewelToSend =
-            JewelToSend({to: msg.sender, uniqueId: uniqueId, index: _orders[supplier].length + 1});
+        JewelToSend memory jewelToSend = JewelToSend({
+            to: msg.sender,
+            uniqueId: uniqueId,
+            index: _orders[supplier].length + 1,
+            quantity: requestedQuantity
+        });
 
         _orders[supplier].push(jewelToSend);
         emit JewelChain_NewOrder(supplier, msg.sender, uniqueId);
@@ -171,6 +175,9 @@ contract RawMineral is IJewelChain, UserConstant {
 
         // Verificar que el uniqueId coincide con el pedido
         require(jewelToSend.uniqueId == uniqueId, "Order does not match uniqueId");
+
+        // Modificar el jewelRecord para reflejar la cantidad correcta del pedido
+        jewelRecord.quantity = jewelToSend.quantity;
 
         // quitamos el elemento del array principal
         if (jewelArray.length != index) {
