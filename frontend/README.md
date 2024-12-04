@@ -21,11 +21,13 @@ Sigue estos pasos para configurar y ejecutar el proyecto:
    NEXT_PUBLIC_USER_CONTRACT_ADDRESS=
    NEXT_PUBLIC_RAW_MINERAL_CONTRACT_ADDRESS=
    NEXT_PUBLIC_DISTRIBUTOR_CONTRACT_ADDRESS=
+   NEXT_PUBLIC_JEWEL_FACTORY_CONTRACT_ADDRESS=
    ```
 
    - **`NEXT_PUBLIC_USER_CONTRACT_ADDRESS`**: Dirección del contrato desplegado para gestionar usuarios y roles.
    - **`NEXT_PUBLIC_RAW_MINERAL_CONTRACT_ADDRESS`**: Dirección del contrato para la gestión de materiales en bruto.
    - **`NEXT_PUBLIC_DISTRIBUTOR_CONTRACT_ADDRESS`**: Dirección del contrato para la gestión de distribución.
+   - **`NEXT_PUBLIC_JEWEL_FACTORY_CONTRACT_ADDRESS`**: Direccion contratro para la gestión jewel factory
 
    **Nota**: Reemplaza los valores con las direcciones públicas de los contratos desplegados.
 

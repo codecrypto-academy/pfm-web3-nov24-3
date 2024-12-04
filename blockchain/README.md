@@ -22,11 +22,12 @@
 
 ### Contratos desplegados
 
-| **Contrato**        | **Dirección**                               | **Descripción**                                                                 |
-|----------------------|---------------------------------------------|---------------------------------------------------------------------------------|
-| **UserJewelChain**   | `0xe7B2d9331728219853eD5fb5F294350Ea680C5c0` | Gestiona usuarios y roles necesarios para el sistema.                          |
-| **RawMineral**       | `0x889cc60f3D1bC55c189271c59848E6289785f34f` | Controla la creación y manejo de minerales.                          |
-| **Distributor**      | `0xe986765Bd00ece21565e6E438Ace940B8c332d82` | Maneja la creacion y gestion de joyas en el sistema.                    |
+| **Contrato**        | **Dirección**                               |**Descripción**                                                                 | Transaction |
+|----------------------|---------------------------------------------|---------------------------------------------------------------------------------|-------------|
+| **UserJewelChain**   | `0x44d35DB960bfE77700Eb1d74F42ce2F6E2A893e0` | Gestiona usuarios y roles necesarios para el sistema.                          | [Transaction User smart contract](https://cardona-zkevm.polygonscan.com/address/0x44d35DB960bfE77700Eb1d74F42ce2F6E2A893e0) |
+| **RawMineral**       | `0x65B6F94A20109650dF92A1A14831F423377e25e1` | Controla la creación y manejo de minerales.                          | [Transaction RawMineral smart contract](https://cardona-zkevm.polygonscan.com/address/0x65B6F94A20109650dF92A1A14831F423377e25e1) |
+| **Distributor**      | `0x1bC83647199b33c263864cF902d05b4853520483` | Realiza el envio de minerales y joyas en el sistema.                    | [Transaction Distributor smart contract](https://cardona-zkevm.polygonscan.com/address/0x1bC83647199b33c263864cF902d05b4853520483) |
+| **JewelFactory**      | `0xa3CBaa500fBB3eCb68b1C09ccEd4e7c674d1FE76` | Maneja la creacion y gestion de joyas en el sistema.                    | [Transaction JewelFactory smart contract](https://cardona-zkevm.polygonscan.com/address/0xa3CBaa500fBB3eCb68b1C09ccEd4e7c674d1FE76) |
 
 --
 
