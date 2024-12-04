@@ -15,11 +15,11 @@ export const useRawMineralOrders = (provider: BrowserProvider | null) => {
   }, [provider]);
 
   const orderMineral = useCallback(
-    async (address: string, uniqueId: string) => {
+    async (address: string, uniqueId: string, quantity: number) => {
       if (!rawMineralService) return;
       try {
         setIsLoading(true);
-        const txHash = await rawMineralService.orderMaterial(address, uniqueId, 2); // TODO: Cambiar de forma dinámica
+        const txHash = await rawMineralService.orderMaterial(address, uniqueId, quantity); // TODO: Cambiar de forma dinámica
         return txHash;
       } catch (err) {
         console.error("Error to order mineral:", err);
