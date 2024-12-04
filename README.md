@@ -1,5 +1,3 @@
-### README Actualizado para "JewelChain"
-
 # JewelChain
 
 Bienvenido a **JewelChain**, un sistema de trazabilidad para la industria de la joyería diseñado para garantizar la transparencia y confianza a lo largo de toda la cadena de valor. Desde la extracción de materiales hasta la venta final al cliente, JewelChain utiliza tecnología blockchain para registrar y verificar cada etapa del proceso, asegurando autenticidad, sostenibilidad y una experiencia confiable para los usuarios.
