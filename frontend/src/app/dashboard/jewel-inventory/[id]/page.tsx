@@ -93,9 +93,20 @@ export default function JewelDetails({ params }: { params: { id: string } }) {
                         <h2 className="card-title">Datos Técnicos</h2>
                         <div className="space-y-2">
                             {jewel.data && (
-                                <pre className="whitespace-pre-wrap break-words">
-                                    {JSON.stringify(jewel.data, null, 2)}
-                                </pre>
+                                <div className="space-y-2">
+                                    <p>
+                                        <span className="font-bold">Calidad:</span>{" "}
+                                        {jewel.data.quality} quilates
+                                    </p>
+                                    <p>
+                                        <span className="font-bold">Diseño:</span>{" "}
+                                        {jewel.data.design}
+                                    </p>
+                                    <p>
+                                        <span className="font-bold">Certificación:</span>{" "}
+                                        {jewel.data.certification}
+                                    </p>
+                                </div>
                             )}
                         </div>
                     </div>

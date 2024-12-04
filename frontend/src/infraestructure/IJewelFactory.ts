@@ -14,8 +14,15 @@ export interface Jewel {
   name: string;
   creationDate: number;
   creator: string;
-  materials: JewelMaterial[];
-  data: string;
+  materials: {
+    materialId: string;
+    quantity: number;
+  }[];
+  data: {
+    quality: number;
+    design: string;
+    certification: string;
+  };
   ownershipHistory: string[];
   totalSupply: number;
 }

@@ -32,19 +32,43 @@ export class JewelFactorySC implements IJewelFactory {
     const contract = await this.getContract();
     const jewels = await contract.getAllJewels();
     
-    return jewels.map((jewel: any) => ({
-        tokenId: Number(jewel.tokenId),
-        name: ethers.decodeBytes32String(jewel.name),
-        creationDate: Number(jewel.creationDate),
-        creator: jewel.creator,
-        materials: jewel.materials.map((m: any) => ({
-            materialId: m.materialId,
-            quantity: Number(m.quantity)
-        })),
-        data: jewel.data,
-        ownershipHistory: jewel.ownershipHistory,
-        totalSupply: Number(jewel.totalSupply)
-    }));
+    return jewels.map((jewel: any) => {
+        // Decodificar los datos técnicos
+        let decodedData = {
+            quality: 0,
+            design: "",
+            certification: ""
+        };
+
+        try {
+            const decoded = ethers.AbiCoder.defaultAbiCoder().decode(
+                ["uint256", "string", "string"],
+                jewel.data
+            );
+            
+            decodedData = {
+                quality: Number(decoded[0]),
+                design: decoded[1],
+                certification: decoded[2]
+            };
+        } catch (error) {
+            console.error("Error decodificando datos técnicos:", error);
+        }
+
+        return {
+            tokenId: Number(jewel.tokenId),
+            name: ethers.decodeBytes32String(jewel.name),
+            creationDate: Number(jewel.creationDate),
+            creator: jewel.creator,
+            materials: jewel.materials.map((m: any) => ({
+                materialId: m.materialId,
+                quantity: Number(m.quantity)
+            })),
+            data: decodedData,
+            ownershipHistory: jewel.ownershipHistory,
+            totalSupply: Number(jewel.totalSupply)
+        };
+    });
   }
 
   async createJewel(jewelData: CreateJewelDTO): Promise<number> {
