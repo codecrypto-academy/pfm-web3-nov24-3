@@ -43,4 +43,5 @@ interface IUserJewelChain {
     function loginUser() external view returns (User memory);
     function getRoleUser(address _userAddress) external view returns (bytes32);
     function getUsersByRole(bytes32 role) external view returns (User[] memory);
+    function getUserName(address _userAddress) external view returns (string memory);
 }
