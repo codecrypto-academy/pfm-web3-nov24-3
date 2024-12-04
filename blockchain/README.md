@@ -101,9 +101,23 @@ En todos los casos siempre hay que indicar cual es la PRIVATE_KEY del administra
    forge script script/UserJewelChain__Deploy.s.sol:DeployUsersJewelsChain --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
    ```
 
-- **Desplegar RawMineral:**  
+- **Desplegar RawMineral:**
+  Primero hay que desplegar el contrato de UserJewelChain, luego se despliega este contrato. Ya que necesita la direccion del contrato users.
+  El comando que se ha utilizado para desplegar el contrato:
+  ```bash
+  forge script script/RawMineral__Deploy.s.sol:DeployRawMineral --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
+  ```
+- **Desplegar Distributor:**
+   Primero hay que desplegar el contrato de UserJewelChain y RawMineral, luego se despliega este contrato. Ya que necesita la direccion de los contratos users y raw_mineral.
+   El comando que se ha utilizado para desplegar el contrato:
    ```bash
-   forge script script/RawMineral__Deploy.s.sol:DeployRawMineral --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
+   forge script script/Distributor__Deploy.s.sol:DeployDistributor --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
+   ```
+- **Desplegar JewelFactory:**
+   Primero hay que desplegar el contrato de UserJewelChain y RawMineral, luego se despliega este contrato. Ya que necesita la direccion de los contratos users y raw_mineral.
+   El comando que se ha utilizado para desplegar el contrato:
+   ```bash
+   forge script script/JewelFactory__Deploy.s.sol:DeployJewelFactory --private-key $PRIVATE_KEY --rpc-url mumbai --broadcast --legacy
    ```
 
 - **Desplegar Todos los contratos:**  

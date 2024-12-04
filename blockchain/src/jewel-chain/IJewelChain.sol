@@ -27,6 +27,7 @@ interface IJewelChain {
         address to;
         bytes32 uniqueId;
         uint256 index;
+        uint256 quantity;
     }
 
     // Errors
@@ -113,7 +114,7 @@ interface IJewelChain {
      * @param supplier Dirección del proveedor del cual se desean consultar los registros.
      * @param uniqueId id de una joya o mineral.
      */
-    function orderMaterial(address supplier, bytes32 uniqueId) external;
+    function orderMaterial(address supplier, bytes32 uniqueId, uint256 requestedQuantity) external;
 
     /**
      * @dev funcion que recupera todos los materiales de un supplier

@@ -12,6 +12,7 @@ contract RawMineral is IJewelChain, UserConstant {
     mapping(bytes32 => uint256) private _rawJewelMap;
 
     JewelRecord[] jewelArray;
+    uint256 private _nonce;
 
     // smart contract
     UserJewelChain private sc_userJewelChain;
@@ -41,7 +42,7 @@ contract RawMineral is IJewelChain, UserConstant {
 
     modifier existRawMineral(bytes32 uniqueId) {
         uint256 index = _rawJewelMap[uniqueId];
-        if (index == 0) {
+        if (index == 0 || (index - 1) >= jewelArray.length) {
             revert RawMineral__UniqueIdNotFound(uniqueId);
         }
         _;
@@ -57,7 +58,7 @@ contract RawMineral is IJewelChain, UserConstant {
         checkAddresZero
         checkRoleUser(UserConstant.RAW_MINERAL_ROLE)
     {
-        bytes32 uniqueId = keccak256(abi.encodePacked(msg.sender, block.timestamp));
+        bytes32 uniqueId = keccak256(abi.encodePacked(msg.sender, block.timestamp, _nonce++));
         JewelRecord memory jewelRecord = JewelRecord({
             supplier: msg.sender,
             uniqueId: uniqueId,
@@ -104,10 +105,9 @@ contract RawMineral is IJewelChain, UserConstant {
         emit JewelChain_Recieve(supplier, distributor, trackingId, jewelRecord);
     }
 
-    function orderMaterial(address supplier, bytes32 uniqueId)
+    function orderMaterial(address supplier, bytes32 uniqueId, uint256 requestedQuantity)
         external
         override
-        isSupplierRawMineral(supplier)
         existRawMineral(uniqueId)
     {
         // comprobar que solo pueden acceder roles JEWEL_FACTORY
@@ -118,18 +118,33 @@ contract RawMineral is IJewelChain, UserConstant {
         // Obtener el array asociado al address
         JewelRecord[] storage jewelRecord = _raw[supplier];
 
-        // Buscar el índice del elemento con el uniqueId
+        // Buscar el índice del elemento con el uniqueId y verificar cantidad
         for (uint256 i = 0; i < jewelRecord.length; i++) {
             if (jewelRecord[i].uniqueId == uniqueId) {
-                jewelRecord[i] = jewelRecord[jewelRecord.length - 1];
-                jewelRecord.pop();
+                // Verificar que hay suficiente cantidad disponible
+                if (jewelRecord[i].quantity < requestedQuantity) {
+                    revert RawMineral__InsufficientQuantity(uniqueId, requestedQuantity, jewelRecord[i].quantity);
+                }
+
+                // Actualizar la cantidad restante
+                jewelRecord[i].quantity -= requestedQuantity;
+
+                // Si la cantidad llega a 0, eliminar el registro
+                if (jewelRecord[i].quantity == 0) {
+                    jewelRecord[i] = jewelRecord[jewelRecord.length - 1];
+                    jewelRecord.pop();
+                }
             }
         }
 
-        JewelToSend memory jeweToSend =
-            JewelToSend({to: msg.sender, uniqueId: uniqueId, index: _orders[supplier].length + 1});
+        JewelToSend memory jewelToSend = JewelToSend({
+            to: msg.sender,
+            uniqueId: uniqueId,
+            index: _orders[supplier].length + 1,
+            quantity: requestedQuantity
+        });
 
-        _orders[supplier].push(jeweToSend);
+        _orders[supplier].push(jewelToSend);
         emit JewelChain_NewOrder(supplier, msg.sender, uniqueId);
     }
 
@@ -150,20 +165,33 @@ contract RawMineral is IJewelChain, UserConstant {
         existRawMineral(uniqueId)
     {
         uint256 index = _rawJewelMap[uniqueId];
+        require(index > 0 && index <= jewelArray.length, "Invalid index");
+
         JewelRecord memory jewelRecord = jewelArray[index - 1];
-        // quitamos el elemtno del array
+
+        // Verificar que el pedido existe y es válido
+        require(indexOrder > 0 && indexOrder <= _orders[msg.sender].length, "Invalid order index");
+        JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
+
+        // Verificar que el uniqueId coincide con el pedido
+        require(jewelToSend.uniqueId == uniqueId, "Order does not match uniqueId");
+
+        // Modificar el jewelRecord para reflejar la cantidad correcta del pedido
+        jewelRecord.quantity = jewelToSend.quantity;
+
+        // quitamos el elemento del array principal
         if (jewelArray.length != index) {
             jewelArray[index - 1] = jewelArray[jewelArray.length - 1];
             bytes32 uniqueIdLast = jewelArray[jewelArray.length - 1].uniqueId;
             _rawJewelMap[uniqueIdLast] = index;
         }
         jewelArray.pop();
+        delete _rawJewelMap[uniqueId];
 
         bytes memory jewelBytes = abi.encode(jewelRecord);
 
-        JewelToSend memory jewelToSend = _orders[msg.sender][indexOrder - 1];
-        // quitamos de los pedidos
-        if (_orders[msg.sender].length == indexOrder) {
+        // quitamos de los pedidos manteniendo el orden
+        if (_orders[msg.sender].length != indexOrder) {
             _orders[msg.sender][indexOrder - 1] = _orders[msg.sender][_orders[msg.sender].length - 1];
         }
         _orders[msg.sender].pop();
@@ -200,4 +228,9 @@ contract RawMineral is IJewelChain, UserConstant {
     function decodeJewel(bytes calldata encodedData) external pure returns (JewelRecord memory) {
         return abi.decode(encodedData, (JewelRecord));
     }
+
+    // Añadir el error para cantidad insuficiente
+    error RawMineral__InsufficientQuantity(bytes32 uniqueId, uint256 requested, uint256 available);
+    error RawMineral__InvalidOrderIndex(uint256 providedIndex, uint256 maxIndex);
+    error RawMineral__OrderMismatch(bytes32 providedId, bytes32 orderId);
 }

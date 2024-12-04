@@ -27,7 +27,7 @@ export default function Shipment() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Pedidos</h1>
+        <h1 className="text-2xl font-bold">Envíos</h1>
       </div>
       {isLoading ? (
         <div className="flex justify-center">

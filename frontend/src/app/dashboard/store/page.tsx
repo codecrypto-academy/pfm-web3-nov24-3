@@ -65,6 +65,7 @@ export default function Store() {
                 description={descriptionRawMinerla(rawMineral)}
                 image={rawMineral.img}
                 name={rawMineral.name}
+                availableQuantity={Number(rawMineral.quantity)}
                 onSelect={buyStore}
               />
             </div>

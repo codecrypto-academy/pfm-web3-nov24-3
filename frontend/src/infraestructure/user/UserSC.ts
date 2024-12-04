@@ -60,4 +60,9 @@ export class UserSC implements IUser {
     return new Contract(ADDRESS, ABI_USER, signer)
   }
 
+  async getUserName(address: string): Promise<string> {
+    const contract = await this.getContractUser();
+    return await contract.getUserName(address);
+  }
+
 }
