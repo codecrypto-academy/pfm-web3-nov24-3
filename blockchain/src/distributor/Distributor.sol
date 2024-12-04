@@ -6,6 +6,7 @@ import {IJewelChain} from "./../jewel-chain/IJewelChain.sol";
 import {UserJewelChain} from "./../user/UserJewelChain.sol";
 import {UserConstant} from "./../user/UserConstant.sol";
 import {IDistributor} from "./IDistributor.sol";
+import {JewelFactory} from "./../jewel-chain/JewelFactory.sol";
 
 contract Distributor is IDistributor, UserConstant {
     mapping(bytes32 => uint256) private deliveriesPending;
@@ -13,6 +14,7 @@ contract Distributor is IDistributor, UserConstant {
 
     RawMineral private sc_rawMineral;
     UserJewelChain private sc_userJewelChain;
+    JewelFactory private sc_jewelFactory;
 
     modifier checkRoleUser(bytes32 _role) {
         if (!sc_userJewelChain.checkUserRole(msg.sender, _role)) {
@@ -38,6 +40,10 @@ contract Distributor is IDistributor, UserConstant {
     constructor(address _rawMineral, address _userJewelChain) {
         sc_rawMineral = RawMineral(_rawMineral);
         sc_userJewelChain = UserJewelChain(_userJewelChain);
+    }
+
+    function setJewelFactoryAddress(address _jewelFactory) external checkRoleUser(UserConstant.ADMIN_ROLE) {
+        sc_jewelFactory = JewelFactory(_jewelFactory);
     }
 
     /**
@@ -86,7 +92,7 @@ contract Distributor is IDistributor, UserConstant {
     {
         uint256 index = deliveriesPending[trackingId];
 
-        Delivery memory delivery = deliveries[index];
+        Delivery memory delivery = deliveries[index - 1];
         delivery.deliveryDate = block.timestamp;
 
         address receiver = delivery.receiver;
@@ -108,7 +114,8 @@ contract Distributor is IDistributor, UserConstant {
         if (_roleUserDelivery == UserConstant.RAW_MINERAL_ROLE) {
             sc_rawMineral.recieveMaterial(msg.sender, receiver, trackingId, jewelRecord);
         } else if (_roleUserDelivery == UserConstant.JEWEL_FACTORY_ROLE) {
-            revert("Method not implemented");
+            IJewelChain.JewelRecord memory record = sc_rawMineral.decodeJewel(jewelRecord);
+            sc_jewelFactory.receiveMaterial(record.supplier, record.uniqueId, record.quantity, trackingId, record);
         } else if (_roleUserDelivery == UserConstant.STORE_ROLE) {
             revert("Method not implemented");
         } else {

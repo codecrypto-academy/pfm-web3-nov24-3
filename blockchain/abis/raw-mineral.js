@@ -1,567 +1,637 @@
 export const RAW_MINERAL_ABI = [
-    {
-        type: "constructor",
-        inputs: [
-            {
-                name: "_sc_userJewelChain",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "function",
-        name: "ADMIN_ROLE",
-        inputs: [],
-        outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "DISTRIBUTOR_ROLE",
-        inputs: [],
-        outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "JEWEL_FACTORY_ROLE",
-        inputs: [],
-        outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "RAW_MINERAL_ROLE",
-        inputs: [],
-        outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "STORE_ROLE",
-        inputs: [],
-        outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "createJewelRecord",
-        inputs: [
-            {
-                name: "name",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-            {
-                name: "date",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "quantity",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "data", type: "bytes", internalType: "bytes" },
-        ],
-        outputs: [],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "function",
-        name: "decodeJewel",
-        inputs: [
-            {
-                name: "encodedData",
-                type: "bytes",
-                internalType: "bytes",
-            },
-        ],
-        outputs: [
-            {
-                name: "",
-                type: "tuple",
-                internalType: "struct IJewelChain.JewelRecord",
-                components: [
-                    {
-                        name: "supplier",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "uniqueId",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "name",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "date",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "quantity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "recordType",
-                        type: "uint8",
-                        internalType: "enum IJewelChain.RecordType",
-                    },
-                    {
-                        name: "data",
-                        type: "bytes",
-                        internalType: "bytes",
-                    },
-                ],
-            },
-        ],
-        stateMutability: "pure",
-    },
-    {
-        type: "function",
-        name: "encodeJewel",
-        inputs: [
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-        ],
-        outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "getJewelByUniqueId",
-        inputs: [
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-        ],
-        outputs: [
-            {
-                name: "",
-                type: "tuple",
-                internalType: "struct IJewelChain.JewelRecord",
-                components: [
-                    {
-                        name: "supplier",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "uniqueId",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "name",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "date",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "quantity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "recordType",
-                        type: "uint8",
-                        internalType: "enum IJewelChain.RecordType",
-                    },
-                    {
-                        name: "data",
-                        type: "bytes",
-                        internalType: "bytes",
-                    },
-                ],
-            },
-        ],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "getJewelRecordBySupplier",
-        inputs: [
-            {
-                name: "supplier",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-        outputs: [
-            {
-                name: "",
-                type: "tuple[]",
-                internalType: "struct IJewelChain.JewelRecord[]",
-                components: [
-                    {
-                        name: "supplier",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "uniqueId",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "name",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "date",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "quantity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "recordType",
-                        type: "uint8",
-                        internalType: "enum IJewelChain.RecordType",
-                    },
-                    {
-                        name: "data",
-                        type: "bytes",
-                        internalType: "bytes",
-                    },
-                ],
-            },
-        ],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "getOrderMaterialList",
-        inputs: [],
-        outputs: [
-            {
-                name: "",
-                type: "tuple[]",
-                internalType: "struct IJewelChain.JewelToSend[]",
-                components: [
-                    {
-                        name: "to",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "uniqueId",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "index",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                ],
-            },
-        ],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "orderMaterial",
-        inputs: [
-            {
-                name: "supplier",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-        ],
-        outputs: [],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "function",
-        name: "recieveMaterial",
-        inputs: [
-            {
-                name: "distributor",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "supplier",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "trackingId",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-            { name: "jewels", type: "bytes", internalType: "bytes" },
-        ],
-        outputs: [],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "function",
-        name: "sendMaterial",
-        inputs: [
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-            {
-                name: "indexOrder",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        outputs: [],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "function",
-        name: "setDistributorSC",
-        inputs: [
-            {
-                name: "_sc_Distributor",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-        outputs: [],
-        stateMutability: "nonpayable",
-    },
-    {
-        type: "event",
-        name: "JewelChain_NewOrder",
-        inputs: [
-            {
-                name: "supplier",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "receiver",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-            },
-        ],
-        anonymous: false,
-    },
-    {
-        type: "event",
-        name: "JewelChain_Recieve",
-        inputs: [
-            {
-                name: "supplier",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "distributor",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "trackingId",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-            },
-            {
-                name: "jewelRecord",
-                type: "tuple",
-                indexed: false,
-                internalType: "struct IJewelChain.JewelRecord",
-                components: [
-                    {
-                        name: "supplier",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "uniqueId",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "name",
-                        type: "bytes32",
-                        internalType: "bytes32",
-                    },
-                    {
-                        name: "date",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "quantity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "recordType",
-                        type: "uint8",
-                        internalType: "enum IJewelChain.RecordType",
-                    },
-                    {
-                        name: "data",
-                        type: "bytes",
-                        internalType: "bytes",
-                    },
-                ],
-            },
-        ],
-        anonymous: false,
-    },
-    {
-        type: "event",
-        name: "JewelChain__Created",
-        inputs: [
-            {
-                name: "supplier",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-            },
-            {
-                name: "name",
-                type: "bytes32",
-                indexed: false,
-                internalType: "bytes32",
-            },
-            {
-                name: "date",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
-            {
-                name: "quantity",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
-            {
-                name: "data",
-                type: "bytes",
-                indexed: false,
-                internalType: "bytes",
-            },
-            {
-                name: "recordType",
-                type: "uint8",
-                indexed: false,
-                internalType: "enum IJewelChain.RecordType",
-            },
-        ],
-        anonymous: false,
-    },
-    {
-        type: "event",
-        name: "JewelChain__SendNewOrder",
-        inputs: [
-            {
-                name: "supplier",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "receiver",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-            },
-        ],
-        anonymous: false,
-    },
-    {
-        type: "error",
-        name: "RawMineral__SupplierIsNotRawMineral",
-        inputs: [
-            {
-                name: "supplierAddress",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-    },
-    {
-        type: "error",
-        name: "RawMineral__UniqueIdNotFound",
-        inputs: [
-            {
-                name: "uniqueId",
-                type: "bytes32",
-                internalType: "bytes32",
-            },
-        ],
-    },
-    {
-        type: "error",
-        name: "RawMineral__UserInvalidAddress",
-        inputs: [
-            {
-                name: "userAddress",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-    },
-    {
-        type: "error",
-        name: "RawMineral__UserNotAuthorized",
-        inputs: [
-            {
-                name: "userAddress",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-    },
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "name",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "createJewelRecord",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_sc_userJewelChain",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "requested",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "available",
+				"type": "uint256"
+			}
+		],
+		"name": "RawMineral__InsufficientQuantity",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "supplierAddress",
+				"type": "address"
+			}
+		],
+		"name": "RawMineral__SupplierIsNotRawMineral",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			}
+		],
+		"name": "RawMineral__UniqueIdNotFound",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
+		],
+		"name": "RawMineral__UserInvalidAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
+		],
+		"name": "RawMineral__UserNotAuthorized",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			}
+		],
+		"name": "JewelChain_NewOrder",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "distributor",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "trackingId",
+				"type": "bytes32"
+			},
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "supplier",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "uniqueId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "name",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum IJewelChain.RecordType",
+						"name": "recordType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct IJewelChain.JewelRecord",
+				"name": "jewelRecord",
+				"type": "tuple"
+			}
+		],
+		"name": "JewelChain_Recieve",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "name",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "date",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "quantity",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum IJewelChain.RecordType",
+				"name": "recordType",
+				"type": "uint8"
+			}
+		],
+		"name": "JewelChain__Created",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			}
+		],
+		"name": "JewelChain__SendNewOrder",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "requestedQuantity",
+				"type": "uint256"
+			}
+		],
+		"name": "orderMaterial",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "distributor",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "trackingId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes",
+				"name": "jewels",
+				"type": "bytes"
+			}
+		],
+		"name": "recieveMaterial",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "indexOrder",
+				"type": "uint256"
+			}
+		],
+		"name": "sendMaterial",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_sc_Distributor",
+				"type": "address"
+			}
+		],
+		"name": "setDistributorSC",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "ADMIN_ROLE",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "encodedData",
+				"type": "bytes"
+			}
+		],
+		"name": "decodeJewel",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "supplier",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "uniqueId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "name",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum IJewelChain.RecordType",
+						"name": "recordType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"internalType": "struct IJewelChain.JewelRecord",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "DISTRIBUTOR_ROLE",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			}
+		],
+		"name": "encodeJewel",
+		"outputs": [
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "uniqueId",
+				"type": "bytes32"
+			}
+		],
+		"name": "getJewelByUniqueId",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "supplier",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "uniqueId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "name",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum IJewelChain.RecordType",
+						"name": "recordType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"internalType": "struct IJewelChain.JewelRecord",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			}
+		],
+		"name": "getJewelRecordBySupplier",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "supplier",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "uniqueId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "name",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "date",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum IJewelChain.RecordType",
+						"name": "recordType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"internalType": "struct IJewelChain.JewelRecord[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getOrderMaterialList",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "uniqueId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IJewelChain.JewelToSend[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "JEWEL_FACTORY_ROLE",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "RAW_MINERAL_ROLE",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "STORE_ROLE",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
 ];

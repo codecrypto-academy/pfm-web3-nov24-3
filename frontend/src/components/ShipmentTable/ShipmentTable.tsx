@@ -5,16 +5,42 @@ import { formatDate } from "@/utils/dateUtils";
 import Link from "next/link";
 import { FaEye } from "react-icons/fa";
 import { TruncateItem } from "../truncate/TruncateItem";
+import { useUserService } from "@/hooks/user/useUserService";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
 
 interface ShipmentTableProps {
   listShipments: Shipment[];
 }
 
 export function ShipmentTable({ listShipments }: ShipmentTableProps) {
+  const { provider } = useAuth();
+  const { getUserName } = useUserService(provider);
+  const [userNames, setUserNames] = useState<Record<string, string>>({});
+
   const deliveryDate = (date: number): Date => {
     const newDate = new Date(date);
     return new Date(newDate.setDate(newDate.getDate() + 2));
   };
+
+  useEffect(() => {
+    const fetchUserNames = async () => {
+      const names: Record<string, string> = {};
+      for (const shipment of listShipments) {
+        if (!names[shipment.supplier]) {
+          const supplierName = await getUserName(shipment.supplier);
+          if (supplierName) names[shipment.supplier] = supplierName;
+        }
+        if (!names[shipment.receiver]) {
+          const receiverName = await getUserName(shipment.receiver);
+          if (receiverName) names[shipment.receiver] = receiverName;
+        }
+      }
+      setUserNames(names);
+    };
+
+    fetchUserNames();
+  }, [listShipments, getUserName]);
 
   return (
     <div className="overflow-x-auto">
@@ -39,10 +65,29 @@ export function ShipmentTable({ listShipments }: ShipmentTableProps) {
                 <TruncateItem item={order.trackingId} />
               </td>
               <td>
-                <TruncateItem item={order.supplier} />
+                {userNames[order.supplier] ? (
+                  <>
+                    {userNames[order.supplier]}{" "}
+                    <span className="text-sm text-gray-500">
+                      ({order.supplier})
+                    </span>
+                  </>
+                ) : (
+                  order.supplier
+                )}
+
               </td>
               <td>
-                <TruncateItem item={order.shipper} />
+                {userNames[order.receiver] ? (
+                  <>
+                    {userNames[order.receiver]}{" "}
+                    <span className="text-sm text-gray-500">
+                      ({order.receiver})
+                    </span>
+                  </>
+                ) : (
+                  order.receiver
+                )}
               </td>
               <td>{formatDate(new Date(order.date))}</td>
 

@@ -6,4 +6,5 @@ export interface IUser {
   deleteUser(address: string): Promise<TransactionReceipt>;
   getUsersList(): Promise<UserSCList[]>;
   getUsersByRole(role: string): Promise<UserSCList[]>;
+  getUserName(address: string): Promise<string>;
 }

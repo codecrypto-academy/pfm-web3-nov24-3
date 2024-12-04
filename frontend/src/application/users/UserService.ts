@@ -82,4 +82,13 @@ export class UserService {
     });
     return mappedUsers;
   }
+
+  async getUserName(address: string): Promise<string> {
+    try {
+      return await this.userSC.getUserName(address);
+    } catch (error) {
+      console.error("Error getting user name:", error);
+      throw error;
+    }
+  }
 }

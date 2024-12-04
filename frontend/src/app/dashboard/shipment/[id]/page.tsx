@@ -3,9 +3,11 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { formatDate } from "@/utils/dateUtils";
 import { useEffect, useState } from "react";
-import { Shipment } from "@/domain/distributor/Distributor";
-import { ButtonLoading } from "@/components/button/ButtonLoading";
 import { useDistributor } from "@/hooks/distributor/useDistributor";
+import { useAuth } from "@/context/AuthContext";
+import { ButtonLoading } from "@/components/button/ButtonLoading";
+import { useUserService } from "@/hooks/user/useUserService";
+import { Shipment } from "@/domain/distributor/Distributor";
 
 const mapPrice: Record<string, number> = {
   Diamante: 30,
@@ -20,11 +22,27 @@ export default function PurchaseOrderDetails() {
   const searchParams = useSearchParams();
   const { isLoading, confirmDelivery } = useDistributor();
   const [shipment, setShipment] = useState<Shipment | null>(null);
+  const [supplierName, setSupplierName] = useState<string>("");
+  const [receiverName, setReceiverName] = useState<string>("");
+  const { provider } = useAuth();
+  const { getUserName } = useUserService(provider);
 
   useEffect(() => {
     const order = searchParams.get("delivery");
     setShipment(order ? JSON.parse(order) : null);
   }, [searchParams]);
+
+  useEffect(() => {
+    const fetchNames = async () => {
+      if (shipment) {
+        const supplierFullName = await getUserName(shipment.supplier);
+        const receiverFullName = await getUserName(shipment.receiver);
+        if (supplierFullName) setSupplierName(supplierFullName);
+        if (receiverFullName) setReceiverName(receiverFullName);
+      }
+    };
+    fetchNames();
+  }, [shipment, getUserName]);
 
   const handlerClick = async () => {
     if (shipment) {
@@ -55,11 +73,29 @@ export default function PurchaseOrderDetails() {
               </p>
               <p>
                 <span className="font-bold">Proveedor:</span>{" "}
-                {shipment?.supplier}
+                {supplierName ? (
+                  <>
+                    {supplierName}{" "}
+                    <span className="text-sm text-gray-500">
+                      ({shipment?.supplier})
+                    </span>
+                  </>
+                ) : (
+                  shipment?.supplier
+                )}
               </p>
               <p>
-                <span className="font-bold">Remitente:</span>{" "}
-                {shipment?.receiver}
+                <span className="font-bold">Destinatario:</span>{" "}
+                {receiverName ? (
+                  <>
+                    {receiverName}{" "}
+                    <span className="text-sm text-gray-500">
+                      ({shipment?.receiver})
+                    </span>
+                  </>
+                ) : (
+                  shipment?.receiver
+                )}
               </p>
               <p>
                 <span className="font-bold">Fecha de Recepción:</span>{" "}
