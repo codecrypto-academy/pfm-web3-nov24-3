@@ -1,5 +1,5 @@
 import { BrowserProvider, Contract, ethers } from "ethers";
-import { IJewelFactory, MaterialInventory, Jewel, CreateJewelDTO } from "./IJewelFactory";
+import { IJewelFactory, MaterialInventory, Jewel, CreateJewelDTO, JewelMaterial } from "./IJewelFactory";
 import { JEWEL_FACTORY_ABI } from "@/abis/jewel-factory";
 
 export class JewelFactorySC implements IJewelFactory {
@@ -21,7 +21,7 @@ export class JewelFactorySC implements IJewelFactory {
   async getAllMaterialsInventory(): Promise<MaterialInventory[]> {
     const contract = await this.getContract();
     const [ids, inventories] = await contract.getAllMaterialsInventory();
-    return inventories.map((inventory: any, index: number) => ({
+    return inventories.map((inventory: MaterialInventory, index: number) => ({
       materialId: ids[index],
       quantity: Number(inventory.quantity),
       supplier: inventory.supplier
@@ -32,8 +32,7 @@ export class JewelFactorySC implements IJewelFactory {
     const contract = await this.getContract();
     const jewels = await contract.getAllJewels();
     
-    return jewels.map((jewel: any) => {
-        // Decodificar los datos técnicos
+    return jewels.map((jewel: Jewel) => {
         let decodedData = {
             quality: 0,
             design: "",
@@ -41,16 +40,18 @@ export class JewelFactorySC implements IJewelFactory {
         };
 
         try {
-            const decoded = ethers.AbiCoder.defaultAbiCoder().decode(
-                ["uint256", "string", "string"],
-                jewel.data
-            );
-            
-            decodedData = {
-                quality: Number(decoded[0]),
-                design: decoded[1],
-                certification: decoded[2]
-            };
+            if (typeof jewel.data === 'string' && jewel.data.startsWith('0x')) {
+                const decoded = ethers.AbiCoder.defaultAbiCoder().decode(
+                    ["uint256", "string", "string"],
+                    jewel.data
+                );
+                
+                decodedData = {
+                    quality: Number(decoded[0]),
+                    design: decoded[1],
+                    certification: decoded[2]
+                };
+            }
         } catch (error) {
             console.error("Error decodificando datos técnicos:", error);
         }
@@ -60,7 +61,7 @@ export class JewelFactorySC implements IJewelFactory {
             name: ethers.decodeBytes32String(jewel.name),
             creationDate: Number(jewel.creationDate),
             creator: jewel.creator,
-            materials: jewel.materials.map((m: any) => ({
+            materials: jewel.materials.map((m: JewelMaterial) => ({
                 materialId: m.materialId,
                 quantity: Number(m.quantity)
             })),

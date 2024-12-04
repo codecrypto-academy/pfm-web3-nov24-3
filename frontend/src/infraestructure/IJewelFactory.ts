@@ -14,10 +14,7 @@ export interface Jewel {
   name: string;
   creationDate: number;
   creator: string;
-  materials: {
-    materialId: string;
-    quantity: number;
-  }[];
+  materials: JewelMaterial[];
   data: {
     quality: number;
     design: string;
