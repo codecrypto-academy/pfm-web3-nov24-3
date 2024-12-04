@@ -4,10 +4,8 @@ import { useJewelFactoryService } from "@/hooks/jewel-factory/useJewelFactorySer
 import { InventoryTable } from "@/components/JewelFactory/InventoryTable";
 import { FaSync } from "react-icons/fa";
 import { useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
 
 export default function JewelFactoryInventory() {
-  const { provider } = useAuth();
   const { inventory, isLoading, error, getAllMaterialsInventory } = useJewelFactoryService();
 
   useEffect(() => {

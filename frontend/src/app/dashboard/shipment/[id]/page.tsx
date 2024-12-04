@@ -7,6 +7,7 @@ import { useDistributor } from "@/hooks/distributor/useDistributor";
 import { useAuth } from "@/context/AuthContext";
 import { ButtonLoading } from "@/components/button/ButtonLoading";
 import { useUserService } from "@/hooks/user/useUserService";
+import { Shipment } from "@/domain/distributor/Distributor";
 
 const mapPrice: Record<string, number> = {
   Diamante: 30,

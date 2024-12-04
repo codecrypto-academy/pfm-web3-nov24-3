@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { JewelFactorySC } from "@/infraestructure/JewelFactorySC";
 import { MaterialInventory } from "@/infraestructure/IJewelFactory";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export const useJewelFactory = () => {
   const { provider } = useAuth();
@@ -9,7 +9,7 @@ export const useJewelFactory = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getInventory = async () => {
+  const getInventory = useCallback(async () => {
     if (!provider) return;
     
     setIsLoading(true);
@@ -26,13 +26,13 @@ export const useJewelFactory = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [provider]);
 
   useEffect(() => {
     if (provider) {
       getInventory();
     }
-  }, [provider]);
+  }, [provider, getInventory]);
 
   return {
     inventory,

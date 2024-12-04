@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { CreateJewelDTO, MaterialInventory } from "@/infraestructure/IJewelFactory";
+import { CreateJewelDTO } from "@/infraestructure/IJewelFactory";
 import { useJewelFactoryService } from "@/hooks/jewel-factory/useJewelFactoryService";
-import { useAuth } from "@/context/AuthContext";
 
 interface CreateJewelModalProps {
     isOpen: boolean;

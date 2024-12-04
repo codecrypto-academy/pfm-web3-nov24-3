@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useJewelFactoryService } from "@/hooks/jewel-factory/useJewelFactoryService";
 import { JewelTable } from "@/components/JewelFactory/JewelTable";
 import { CreateJewelModal } from "@/components/JewelFactory/CreateJewelModal";

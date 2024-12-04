@@ -55,7 +55,8 @@ export const CardStore = ({
     try {
       await orderMineral(addressSuplier, uniqueId, quantity);
       onSelect();
-    } catch (err) {
+    } catch (error) {
+      console.error("Error al realizar el pedido", error);
       setError("Error al realizar el pedido");
     }
   };

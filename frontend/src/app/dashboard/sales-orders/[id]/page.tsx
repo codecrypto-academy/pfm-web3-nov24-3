@@ -35,7 +35,7 @@ export default function SalesOrderDetails() {
     const fetchClientName = async () => {
       if (orderJewel?.to) {
         const name = await getUserName(orderJewel.to);
-        setClientName(name);
+        if (name) setClientName(name);
       }
     };
     fetchClientName();

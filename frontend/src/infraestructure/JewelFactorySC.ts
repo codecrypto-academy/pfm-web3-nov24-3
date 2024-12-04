@@ -40,10 +40,11 @@ export class JewelFactorySC implements IJewelFactory {
         };
 
         try {
-            if (typeof jewel.data === 'string' && jewel.data.startsWith('0x')) {
+            const data = jewel.data as unknown;
+            if (typeof data === 'string' && data.startsWith('0x')) {
                 const decoded = ethers.AbiCoder.defaultAbiCoder().decode(
                     ["uint256", "string", "string"],
-                    jewel.data
+                    data
                 );
                 
                 decodedData = {
