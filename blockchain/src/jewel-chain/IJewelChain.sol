@@ -23,6 +23,7 @@ interface IJewelChain {
         address to;
         bytes32 uniqueId;
         uint256 index;
+        uint256 quantity;
     }
 
     // Errors
