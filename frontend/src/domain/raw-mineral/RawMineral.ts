@@ -32,6 +32,7 @@ export interface JewelOrderResponse {
   to: string;
   uniqueId: string;
   index: number;
+  quantity: number | string;
 }
 
 export interface JewelOrder extends JewelOrderResponse, RawMineralChain { }

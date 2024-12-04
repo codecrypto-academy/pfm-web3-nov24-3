@@ -66,11 +66,13 @@ export class RawMineralService {
         const jewelOrderResponseC: JewelOrderResponse = {
           to: jewelOrderResponse.to,
           uniqueId: jewelOrderResponse.uniqueId,
-          index: Number(unitToWei(Number(jewelOrderResponse.index)))
+          index: Number(unitToWei(Number(jewelOrderResponse.index))),
+          quantity: Number(unitToWei(Number(jewelOrderResponse.quantity)))
         };
         return {
-          ...jewelOrderResponseC,
           ...parsedMineral,
+          ...jewelOrderResponseC,
+          
         };
       })
     );
